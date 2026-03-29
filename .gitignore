@@ -1,0 +1,50 @@
+# Dependencias de PHP (Composer)
+/vendor/
+
+# Dependencias de Frontend (Node/NPM)
+/node_modules/
+npm-debug.log
+yarn-error.log
+
+# Archivos de Entorno y Seguridad (¡CRÍTICO!)
+.env
+.env.backup
+.env.production
+*.key
+
+# Archivos de caché y almacenamiento local generados por el framework
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/framework/cache/data/*.php
+/storage/framework/cache/data/**/*.php
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/testing/*
+!/storage/framework/testing/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/logs/*
+!/storage/logs/.gitignore
+
+# Archivos de pruebas y reportes
+/bootstrap/cache/
+phpunit.xml
+/phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+.phpunit.cache
+
+# Archivos del Sistema Operativo (Windows / macOS)
+.DS_Store
+Thumbs.db
+
+# Configuraciones de Entornos de Desarrollo (IDEs)
+.idea/
+.vscode/
+*.sublime-workspace
+*.suo
+*.ntvs*
+*.njsproj
