@@ -21,10 +21,10 @@
 
   <!-- NAV -->
   <nav id="nav">
-    <a href="index.html" class="logo">Service<span>Core</span></a>
+    <a href="index.php" class="logo">Service<span>Core</span></a>
     <ul class="nav-links">
-      <li><a href="index.html">Inicio</a></li>
-      <li><a href="index.html#features">Funciones</a></li>
+      <li><a href="index.php">Inicio</a></li>
+      <li><a href="index.php#features">Funciones</a></li>
       <li><a href="#">Agentes</a></li>
       <li><a href="#">Reportes</a></li>
     </ul>
@@ -34,9 +34,9 @@
   <section class="hero login-hero">
     <div class="login-container">
       <h1>Iniciar Sesión</h1>
-      <form id="loginForm">
-        <input type="text" id="username" placeholder="Usuario" required>
-        <input type="password" id="password" placeholder="Contraseña" required>
+      <form id="loginForm" action="validar_login.php" method="POST">
+        <input type="text" id="username" name="username" placeholder="Usuario" required>
+        <input type="password" id="password" name="password" placeholder="Contraseña" required>
         <button type="submit">Entrar</button>
       </form>
     </div>

@@ -7,8 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  
 </head>
 <body>
 
@@ -27,7 +26,7 @@
       <li><a href="#">Agentes</a></li>
       <li><a href="#">Reportes</a></li>
     </ul>
-    <a href="login.html" class="nav-cta">Iniciar sesión</a>
+    <a href="login.php" class="nav-cta">Iniciar sesión</a>
   </nav>
 
   <!-- HERO -->
@@ -216,7 +215,10 @@
     <p>Hecho para equipos de soporte</p>
   </footer>
 
+  
 </div>
 <script src="/js/script.js"></script>   
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </body>
 </html>

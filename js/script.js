@@ -88,15 +88,3 @@ document.querySelectorAll('.stat-box').forEach(box => {
   box.addEventListener('mouseenter', () => gsap.to(box, { scale: 1.04, duration: 0.3, ease: 'power2.out' }));
   box.addEventListener('mouseleave', () => gsap.to(box, { scale: 1,    duration: 0.4, ease: 'power2.out' }));
 });
-
-/* ── Login form redirection ── */
-document.addEventListener('DOMContentLoaded', () => {
-  const loginForm = document.getElementById('loginForm');
-  if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      // Aquí puedes agregar validación si es necesario
-      window.location.href = 'index.html';
-    });
-  }
-});
