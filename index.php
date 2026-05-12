@@ -19,12 +19,12 @@
 
   <!-- NAV -->
   <nav id="nav">
-    <a href="#" class="logo">Service<span>Core</span></a>
+    <a href="./img/Logo-ServiceCore.png" class="logo">Service<span>Core</span></a>
     <ul class="nav-links">
       <li><a href="#">Inicio</a></li>
       <li><a href="#features">Funciones</a></li>
-      <li><a href="#">Agentes</a></li>
-      <li><a href="#">Reportes</a></li>
+      <li><a href="#">Desarrolladores</a></li>
+      <li><a href="#">Sobre Nosotros</a></li>
     </ul>
     <a href="login.php" class="nav-cta">Iniciar sesión</a>
   </nav>
@@ -44,12 +44,11 @@
       </h1>
 
       <p class="hero-desc" id="hdesc">
-        Mesa de ayuda para equipos modernos. Gestiona tickets, automatiza prioridades y reduce tiempos de respuesta con un panel que realmente se entiende.
+        Mesa de ayuda para equipos modernos. Gestiona tickets, automatiza prioridades y mejora la resolución de problemas dentro de una organización.
       </p>
 
       <div class="hero-btns" id="hbtns">
-        <a href="#" class="btn-primary">Empezar gratis</a>
-        <a href="#" class="btn-ghost">Ver demo</a>
+        <a href="#" class="btn-ghost">Empezar gratis</a>
       </div>
 
       <div class="stats-row" id="srow">
@@ -165,8 +164,8 @@
             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
           </svg>
         </div>
-        <h3>Enrutamiento automático</h3>
-        <p>Asignación inteligente según habilidades del agente, carga actual y nivel de prioridad del ticket.</p>
+        <h3>Control de Usuarios</h3>
+        <p>Creacion y asignacion de tareas y permisos para cada tipo de usuarios dentro de tu empresa. Autenticación y 2FA para mayor seguridad.</p>
       </article>
       <article class="feat-card feat-item">
         <div class="feat-icon">
@@ -174,7 +173,7 @@
             <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
           </svg>
         </div>
-        <h3>SLA en tiempo real</h3>
+        <h3>Priodidades de tickets</h3>
         <p>Alertas automáticas antes de que venza un acuerdo de nivel de servicio. Nunca más un ticket olvidado.</p>
       </article>
       <article class="feat-card feat-item">
@@ -183,8 +182,8 @@
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
           </svg>
         </div>
-        <h3>Portal de autoservicio</h3>
-        <p>Base de conocimiento, FAQs y chatbot integrado para que los usuarios resuelvan problemas comunes por su cuenta.</p>
+        <h3>Resolucion de problemas</h3>
+        <p>Permite a los clientes generar tickets en diferentes categoria que cuenta con sus respectivos empleados especializados.</p>
       </article>
       <article class="feat-card feat-item">
         <div class="feat-icon">
@@ -194,7 +193,7 @@
           </svg>
         </div>
         <h3>Reportes avanzados</h3>
-        <p>Métricas de CSAT, FCR y tiempos de respuesta con dashboards en tiempo real exportables a Excel o PDF.</p>
+        <p>Implementacion de un sistema de seguimiento y control de tickets mediante historiales y estadísticas detalladas en Dasboards.</p>
       </article>
       <article class="feat-card feat-item">
         <div class="feat-icon">
@@ -203,15 +202,15 @@
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
           </svg>
         </div>
-        <h3>Integraciones nativas</h3>
-        <p>Conecta con Slack, Teams, Jira, Salesforce y más de 80 herramientas sin una sola línea de código.</p>
+        <h3>Documentacion y evidencias</h3>
+        <p>Facilitar la adjunción de documentación, evidencias y comentarios relacionados con cada ticket.</p>
       </article>
     </div>
   </section>
 
   <footer>
     <a href="#" class="logo">Service<span>Core</span></a>
-    <p>© 2025 ServiceCore — Mesa de ayuda empresarial</p>
+    <p>© 2026 ServiceCore Corporation— Mesa de ayuda empresarial</p>
     <p>Hecho para equipos de soporte</p>
   </footer>
 
