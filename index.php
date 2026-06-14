@@ -1,3 +1,30 @@
+<?php
+session_start();
+
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
+header("Expires: 0");
+
+// Si ya está autenticado, redirigir a su dashboard
+if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
+
+    switch ((int)$_SESSION['id_rol']) {
+        case 1: header("Location: dashboard_admin.php"); break;
+        case 2: header("Location: dashboard_admin_emp.php"); break;
+        case 3: header("Location: dashboard_aprovador.php"); break;
+        case 4: header("Location: dashboard_agente.php"); break;
+        case 5: header("Location: dashboard_cliente.php"); break;
+        default:
+            session_destroy();
+            header("Location: login.php");
+            break;
+    }
+    exit();
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,7 +33,7 @@
   <title>ServiceCore — Service Desk</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="css/style.css">
   
 </head>
 <body>
@@ -216,7 +243,8 @@
 
   
 </div>
-<script src="/js/script.js"></script>   
+<script src="js/script.js"></script>   
+<script src="js/blocks.js"></script> 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </body>
