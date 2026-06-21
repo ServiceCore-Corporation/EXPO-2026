@@ -62,14 +62,8 @@ $correoUsuario = htmlspecialchars($_SESSION['correo']);
             <a href="dashboard_admin.php" class="menu-item activo">
                 <span class="material-symbols-outlined">dashboard</span>Inicio
             </a>
-            <a href="#" class="menu-item">
-                <span class="material-symbols-outlined">confirmation_number</span>Tickets
-            </a>
-            <a href="#" class="menu-item">
-                <span class="material-symbols-outlined">group</span>Usuarios
-            </a>
-            <a href="#" class="menu-item">
-                <span class="material-symbols-outlined">business</span>Empresas
+            <a href="gestion_empresas.php" class="menu-item ">
+                <span class="material-symbols-outlined">business</span> Gestion de Empresas
             </a>
             <a href="#" class="menu-item">
                 <span class="material-symbols-outlined">workspace_premium</span>Planes
