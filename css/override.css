@@ -1,0 +1,142 @@
+
+/* =========================================================
+   SERVICECORE FIX FINAL - logo visible y diseño ordenado
+   ========================================================= */
+:root{
+    --primary:#5b50b6!important;
+    --primary-dark:#241c63!important;
+    --primary-light:#eeeefe!important;
+    --primary-soft:#d8d5ff!important;
+    --gray-50:#f4f6fd!important;
+    --sidebar-w:270px!important;
+    --shadow-card:0 8px 25px rgba(24,18,78,.08)!important;
+}
+*{box-sizing:border-box}
+body{
+    background:#f4f6fd!important;
+    overflow-x:hidden!important;
+    grid-template-columns:270px 1fr!important;
+    grid-template-rows:68px 1fr!important;
+}
+.material-symbols-outlined{
+    font-family:'Material Symbols Outlined'!important;
+    font-weight:normal!important;
+    font-style:normal!important;
+    font-size:21px!important;
+    line-height:1!important;
+    letter-spacing:normal!important;
+    text-transform:none!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    white-space:nowrap!important;
+    direction:ltr!important;
+    -webkit-font-feature-settings:'liga';
+    -webkit-font-smoothing:antialiased;
+    overflow:hidden!important;
+}
+.sidebar{
+    background:#241c63!important;
+    color:#fff!important;
+    border-right:0!important;
+    padding:30px 24px!important;
+    gap:26px!important;
+}
+.brand{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    text-align:center!important;
+    gap:10px!important;
+    padding:0 5px 22px!important;
+}
+.brand-icon{display:none!important}
+.logo{
+    width:135px!important;
+    height:auto!important;
+    max-height:115px!important;
+    object-fit:contain!important;
+    display:block!important;
+    margin:0 auto 8px!important;
+    border-radius:0!important;
+}
+.brand h1{
+    color:#fff!important;
+    margin:0!important;
+    font-size:20px!important;
+    line-height:1.18!important;
+    font-weight:900!important;
+}
+.brand p{
+    color:#c9c5ff!important;
+    margin:0!important;
+    font-size:13px!important;
+}
+.menu{gap:10px!important}
+.menu-item{
+    color:#c9c5ff!important;
+    font-size:15px!important;
+    font-weight:650!important;
+    padding:14px 16px!important;
+    border-radius:12px!important;
+    gap:12px!important;
+}
+.menu-item:hover{background:rgba(255,255,255,.08)!important;color:#fff!important}
+.menu-item.active{background:#5b50b6!important;color:#fff!important}
+.menu-item .material-symbols-outlined{color:inherit!important;font-size:22px!important;min-width:22px!important}
+.sidebar-box{
+    background:rgba(255,255,255,.08)!important;
+    border:1px solid rgba(255,255,255,.12)!important;
+    color:#fff!important;
+}
+.sidebar-box span,.small-title{color:#c9c5ff!important}
+.mini-tag{background:rgba(255,255,255,.10)!important;color:#fff!important;border:1px solid rgba(255,255,255,.12)!important}
+.estado-dot{color:#fff!important}
+.topbar{
+    height:68px!important;
+    background:#fff!important;
+    border-bottom:1px solid #e5e9f2!important;
+    padding:0 34px!important;
+    box-shadow:0 1px 4px rgba(0,0,0,.06)!important;
+}
+.topbar h2{font-size:22px!important;color:#241c63!important;font-weight:900!important}
+.topbar h2:before{content:'☰';margin-right:18px;color:#5b50b6;font-weight:400}
+.eyebrow{display:none!important}
+.top-actions{gap:16px!important}
+.search-box{background:#f7f8fc!important;border:1px solid #e5e9f2!important;border-radius:12px!important;width:300px!important}
+.icon-btn{border:0!important;background:#fff!important;color:#111827!important}
+.profile strong{font-size:15px!important}
+.profile span{font-size:12px!important}
+.avatar{background:#5b50b6!important;color:#fff!important;border:0!important;overflow:hidden!important;white-space:nowrap!important}
+.content{padding:32px 34px!important;gap:26px!important}
+.breadcrumb{display:none!important}
+.page-head h1{font-size:38px!important;color:#21195f!important;font-weight:900!important;margin:0 0 8px!important}
+.page-head p{font-size:16px!important;color:#6b7280!important;max-width:none!important}
+.card{background:#fff!important;border:1px solid #e4e8f0!important;border-radius:18px!important;box-shadow:0 8px 25px rgba(24,18,78,.08)!important;padding:24px!important}
+.summary-grid,.kpi-grid{gap:22px!important}
+.summary-card,.kpi{min-height:125px!important}
+.section-head h3{font-size:24px!important;color:#111827!important;font-weight:900!important}
+.summary-card h3,.kpi h3{font-size:25px!important;font-weight:900!important;color:#111827!important}
+.summary-icon,.kpi-icon{border-radius:14px!important;background:#eeeefe!important;color:#5b50b6!important}
+.summary-icon.green,.kpi.green .kpi-icon{background:#dcfce7!important;color:#16a34a!important}
+.profile-layout{grid-template-columns:minmax(0,2fr) minmax(300px,1fr)!important;gap:26px!important}
+.grid-2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:22px!important}
+.input-icon{border-radius:12px!important;background:#f8fafc!important;border:1px solid #e5e7eb!important;padding:12px 14px!important}
+.input-icon:focus-within{background:#fff!important;border-color:#5b50b6!important;box-shadow:0 0 0 4px rgba(91,80,182,.13)!important}
+.btn{border-radius:10px!important;font-weight:800!important}
+.btn-primary{background:#5b50b6!important;color:#fff!important}
+.btn-primary:hover{background:#241c63!important}
+.btn-dark{background:#111827!important;color:#fff!important}
+.badge-blue,.badge-purple{background:#eeeefe!important;color:#5b50b6!important}
+.footer{text-align:center!important;color:#9ca3af!important;font-size:12px!important}
+@media(max-width:900px){
+    body{grid-template-columns:1fr!important}
+    .sidebar{position:fixed!important;transform:translateX(-100%)!important;z-index:80!important;transition:.2s!important}
+    .sidebar.open{transform:translateX(0)!important}
+    .topbar,.content{grid-column:1!important}
+    .mobile-only{display:flex!important}
+    .summary-grid,.kpi-grid,.profile-layout,.grid-2,.form-grid{grid-template-columns:1fr!important}
+    .search-box{display:none!important}
+    .page-head h1{font-size:30px!important}
+}
