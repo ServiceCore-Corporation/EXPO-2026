@@ -1,6 +1,5 @@
 gsap.registerPlugin(ScrollTrigger);
 
-/* ── Entrada inicial ── */
 const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
 tl.from('#nav',     { y: -32, opacity: 0, duration: 0.7 })
