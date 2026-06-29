@@ -1,25 +1,4 @@
 <?php
-/* =========================================================
-   40_asignacion_tickets.php — ServiceCore Corporation
-   Vista: "Asignación de Tickets" (rol Supervisor)
-
-   REGLA DE NEGOCIO / RESTRICCIÓN:
-   El Supervisor SOLO puede ver y asignar tickets que pertenezcan
-   a las categorías que tiene asignadas. Esta vista simula esa
-   restricción filtrando el arreglo de tickets en PHP antes de
-   imprimir cualquier HTML.
-
-   En producción, este filtro NO debe hacerse en el front-end:
-   debe ir directamente en la consulta SQL, por ejemplo:
-       SELECT * FROM tickets
-       WHERE categoria_id IN (
-           SELECT categoria_id FROM supervisor_categorias
-           WHERE supervisor_id = :supervisorIdSesion
-       )
-   Así se evita que un supervisor pueda ver tickets de categorías
-   ajenas manipulando el cliente (HTML/JS/parámetros de URL).
-   ========================================================= */
-
 // En producción esto vendría de la sesión autenticada del supervisor.
 $supervisor = [
     'id'     => 'USR-00219',

@@ -1,8 +1,3 @@
-/* =========================================================
-   perfil.js — ServiceCore Corporation
-   Vista: Mi Perfil y Seguridad
-   ========================================================= */
-
 (function () {
     'use strict';
 

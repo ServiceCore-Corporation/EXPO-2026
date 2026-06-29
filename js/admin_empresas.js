@@ -1,8 +1,3 @@
-/* =========================================================
-   admin_empresas.js — ServiceCore Corporation
-   Vista: CRUD Admin-Empresas (Super Admin)
-   ========================================================= */
-
 (function () {
     'use strict';
 

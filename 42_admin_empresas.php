@@ -1,12 +1,4 @@
 <?php
-/* =========================================================
-   42_admin_empresas.php — ServiceCore Corporation
-   Vista: "CRUD Admin-Empresas"
-   Disponible para: Super Admin
-   Permite: crear, listar, editar y habilitar/deshabilitar
-            usuarios de tipo Admin-Empresa.
-   ========================================================= */
-
 // En producción esto vendría de una consulta a la tabla de usuarios
 // filtrada por rol = 'Admin-Empresa'.
 $adminEmpresas = [

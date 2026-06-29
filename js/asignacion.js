@@ -1,8 +1,3 @@
-/* =========================================================
-   asignacion.js — ServiceCore Corporation
-   Vista: Asignación de Tickets (Supervisor)
-   ========================================================= */
-
 (function () {
     'use strict';
 

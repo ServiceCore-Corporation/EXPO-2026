@@ -1,10 +1,4 @@
 <?php
-/* =========================================================
-   41_usuarios_roles.php — ServiceCore Corporation
-   Vista: "Gestión de Usuarios por Rol" (tablero de cards)
-   Disponible para: Administrador
-   ========================================================= */
-
 // Configuración visual de cada rol (icono, color de acento, clase de badge).
 $rolesConfig = [
     'Administrador' => ['icon' => 'shield_person',      'badge' => 'badge-purple', 'accent' => 'purple'],
