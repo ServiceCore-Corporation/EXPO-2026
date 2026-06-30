@@ -1,0 +1,55 @@
+/* ---- 403: the core is sealed. deliberately still. ---- */
+  .mark--403{
+    position:relative;
+  }
+  .mark--403 img{
+    filter:saturate(0.55) brightness(0.9);
+  }
+  .barrier{
+    position:absolute;
+    left:-22px;
+    right:-22px;
+    top:50%;
+    transform:translateY(-50%) rotate(-3deg);
+    height:30px;
+    display:flex;
+    align-items:center;
+    z-index:3;
+  }
+  .barrier::before{
+    content:"";
+    position:absolute;
+    left:0; right:0; top:50%;
+    height:2px;
+    background:repeating-linear-gradient(90deg, rgba(223,231,244,0.85) 0 14px, transparent 14px 22px);
+    transform:translateY(-50%);
+  }
+  .barrier span{
+    position:relative;
+    margin:0 auto;
+    background:var(--ink);
+    border:1px solid rgba(223,231,244,0.55);
+    color:rgba(223,231,244,0.85);
+    font-family:var(--font-mono);
+    font-size:10px;
+    letter-spacing:.16em;
+    padding:4px 10px;
+    border-radius:3px;
+  }
+  .lock{
+    position:absolute;
+    bottom:-14px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:3;
+    width:26px;
+    height:26px;
+  }
+  .code-big{
+    font-family:var(--font-mono);
+    font-weight:700;
+    font-size:14px;
+    letter-spacing:.3em;
+    color:var(--periwinkle);
+    margin-bottom:6px;
+  }
