@@ -8,11 +8,11 @@ header("Expires: 0");
 if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
 
     switch ((int)$_SESSION['id_rol']) {
-        case 1: header("Location: dashboard_admin.php"); break;
-        case 2: header("Location: dashboard_admin_emp.php"); break;
-        case 3: header("Location: dashboard_aprovador.php"); break;
-        case 4: header("Location: dashboard_agente.php"); break;
-        case 5: header("Location: dashboard_cliente.php"); break;
+        case 1: header("Location: vistas/Admin/dashboard_admin.php"); break;
+        case 2: header("Location: vistas/Admin_Empresa/dashboard_admin_emp.php"); break;
+        case 3: header(" Location: vistas/Agente/dashboard_agente.php"); break;
+        case 4: header("Location: vistas/Supervisor/dashboard_aprovador.php"); break;
+        case 5: header("Location: vistas/Cliente/dashboard_cliente.php"); break;
         default:
             session_destroy();
             header("Location: login.php");
@@ -20,6 +20,7 @@ if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
     }
     exit();
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -28,6 +29,7 @@ if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ServiceCore — Service Desk</title>
+  <link rel="icon" type="image/png" href="img/LogoNav.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 

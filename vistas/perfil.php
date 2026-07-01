@@ -1,11 +1,8 @@
 <?php
-/* =========================================================
-   39_mi_perfil.php — ServiceCore Corporation
-   Vista: "Mi Perfil y Seguridad"
-   Disponible para: Administrador, Supervisor, Agente, Cliente
-   ========================================================= */
 
-// En producción estos datos vendrían de la sesión / base de datos.
+define('ROLES_PERMITIDOS', [1, 2, 3, 4, 5]);
+require_once '../../seguridad.php';
+
 $usuario = [
     'id'              => 'USR-00482',
     'nombre'          => 'Alex',
@@ -63,7 +60,7 @@ function iniciales($nombreCompleto) {
     <title>Mi Perfil y Seguridad — ServiceCore</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="../../css/perfil.css">
 </head>
 <body>
 
@@ -516,6 +513,6 @@ function iniciales($nombreCompleto) {
     <!-- Contenedor de notificaciones tipo Toast -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <script src="perfil.js"></script>
+    <script src="js/perfil.js"></script>
 </body>
 </html>

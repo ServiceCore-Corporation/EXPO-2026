@@ -1,6 +1,6 @@
 <?php
 define('ROL_REQUERIDO', 1);
-require_once 'seguridad.php';
+require_once '../../seguridad.php';
 $nombreUsuario = htmlspecialchars($_SESSION['nombre']);
 $correoUsuario = htmlspecialchars($_SESSION['correo']);
 ?>
@@ -9,17 +9,12 @@ $correoUsuario = htmlspecialchars($_SESSION['correo']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin | ServiceCore</title>
+    <title>Panel Administrador | ServiceCore</title>
+    <link rel="icon" type="image/png" href="../../img/LogoNav.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background: #f5f7ff; }
-        .tarjeta { background: white; border-radius: 16px; padding: 24px; border: 1px solid #dfe7fa; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: .3s; }
-        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; color: #c7c9ff; transition: .3s; }
-        .menu-item:hover { background: rgba(255,255,255,.08); color: white; transform: translateX(5px); }
-        .menu-item.activo { background: #5750ad; color: white; }
-    </style>
+    <link rel="stylesheet" href="../../css/dashboard_admin.css">
 </head>
 <body>
 
@@ -42,10 +37,10 @@ $correoUsuario = htmlspecialchars($_SESSION['correo']);
                 <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
                     <span class="material-symbols-outlined text-gray-600">settings</span>Configuración
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
+                <a href="../perfil.php" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
                     <span class="material-symbols-outlined text-gray-600">person</span>Perfil
                 </a>
-                <a href="logout.php" class="flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition">
+                <a href="../../logout.php" class="flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition">
                     <span class="material-symbols-outlined">logout</span>Cerrar Sesión
                 </a>
             </div>
@@ -53,17 +48,23 @@ $correoUsuario = htmlspecialchars($_SESSION['correo']);
     </header>
 
     <!-- MENÚ LATERAL -->
-    <aside class="fixed left-0 top-0 w-64 h-full bg-[#1e1858] text-white p-6">
+    <aside class="fixed left-0 top-0 w-64 h-screen bg-[#1e1858] text-white p-6 flex flex-col">
         <div class="flex flex-col items-center mb-8">
-            <img src="img/logoSC.png" alt="Logo" class="w-20 h-20 object-contain mb-4">
+            <img src="../../img/logoSC.png" alt="Logo" class="w-20 h-20 object-contain mb-4">
             <h6 class="text-lg font-bold text-center leading-6">ServiceCore<br>Corporation</h6>
         </div>
-        <nav class="space-y-2">
+        <nav class="flex flex-col flex-1 gap-2">
             <a href="dashboard_admin.php" class="menu-item activo">
                 <span class="material-symbols-outlined">dashboard</span>Inicio
             </a>
             <a href="gestion_empresas.php" class="menu-item ">
                 <span class="material-symbols-outlined">business</span> Gestion de Empresas
+            </a>
+            <a href="gestion_carrusel.php" class="menu-item">
+                <span class="material-symbols-outlined">view_carousel</span>Gestión de Carrusel
+            </a>
+            <a href="gestion_galeria.php" class="menu-item">
+                <span class="material-symbols-outlined">photo_library</span>Gestión de Galería
             </a>
             <a href="#" class="menu-item">
                 <span class="material-symbols-outlined">workspace_premium</span>Planes
@@ -75,10 +76,17 @@ $correoUsuario = htmlspecialchars($_SESSION['correo']);
                 <span class="material-symbols-outlined">insights</span>Reportes
             </a>
         </nav>
+
+        <div class="flex-grow"></div>
+        <!-- Cerrar sesión -->
+        <a href="../../logout.php"class="mt-auto flex items-center justify-center gap-3 w-full py-3 rounded-xl border-2 border-red-500 text-red-400 font-semibold transition-all duration-300 hover:bg-red-500 hover:text-white hover:shadow-lg">
+            <span class="material-symbols-outlined">logout</span>
+            Cerrar Sesión
+        </a>
     </aside>
 
     <!-- CONTENIDO PRINCIPAL -->
-    <main class="ml-64 pt-24 px-8 pb-10">
+    <main class="contenido ml-64 pt-24 px-8 pb-10">
         <section class="mb-8">
             <h2 class="text-4xl font-bold text-[#1e1858]">Bienvenido, <?= $nombreUsuario ?></h2>
             <p class="text-gray-500 mt-2">Panel de administración de ServiceCore.</p>
@@ -139,107 +147,11 @@ $correoUsuario = htmlspecialchars($_SESSION['correo']);
                 </div>
             </div>
         </div>
-
-        <footer class="text-center text-gray-500 text-sm border-t mt-10 p-4 bg-white rounded-xl">
-            <p>© 2026 ServiceCore Corporation</p>
-        </footer>
     </main>
-
-    <script>
-        // Menú usuario
-        const botonUsuario = document.getElementById("botonUsuario");
-        const menuUsuario  = document.getElementById("menuUsuario");
-        botonUsuario.addEventListener("click", () => menuUsuario.classList.toggle("hidden"));
-        document.addEventListener("click", (e) => {
-            if (!botonUsuario.contains(e.target) && !menuUsuario.contains(e.target))
-                menuUsuario.classList.add("hidden");
-        });
-
-        // Animación de tarjetas
-        const tarjetas = document.querySelectorAll(".animar");
-        tarjetas.forEach(t => {
-            t.style.opacity = "0";
-            t.style.transform = "translateY(30px)";
-            t.style.transition = "transform .4s ease, opacity .4s ease";
-        });
-        window.addEventListener("load", () => {
-            tarjetas.forEach((t, i) => {
-                setTimeout(() => { t.style.opacity = "1"; t.style.transform = "translateY(0)"; }, i * 120);
-            });
-        });
-
-        // Colores de estado
-        function colorEstado(estado) {
-            const mapa = {
-                'Pendiente':   'bg-yellow-100 text-yellow-700',
-                'En proceso':  'bg-blue-100 text-blue-700',
-                'Cerrado':     'bg-green-100 text-green-700',
-                'Cancelado':   'bg-red-100 text-red-700',
-            };
-            return mapa[estado] || 'bg-gray-100 text-gray-700';
-        }
-
-        function colorPrioridad(prioridad) {
-            const mapa = { 'Alta': 'text-red-600', 'Media': 'text-orange-500', 'Baja': 'text-blue-500' };
-            return mapa[prioridad] || 'text-gray-600';
-        }
-
-        // Cargar datos del dashboard
-        async function cargarDashboard() {
-            try {
-                const res  = await fetch('/api/dashboard');
-                const data = await res.json();
-
-                document.getElementById('stat-tickets').textContent  = data.resumen.tickets;
-                document.getElementById('stat-usuarios').textContent = data.resumen.usuarios;
-                document.getElementById('stat-empresas').textContent = data.resumen.empresas;
-                document.getElementById('stat-ingresos').textContent = '$' + parseFloat(data.resumen.ingresos).toLocaleString();
-
-                // Estados
-                const contenedorEstados = document.getElementById('estado-tickets');
-                contenedorEstados.innerHTML = data.tickets_por_estado.map(e => `
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm font-medium">${e.estado}</span>
-                        <span class="px-3 py-1 rounded-full text-xs font-bold ${colorEstado(e.estado)}">${e.total}</span>
-                    </div>
-                `).join('');
-            } catch (err) {
-                console.error('Error cargando dashboard:', err);
-            }
-        }
-
-        // Cargar tickets recientes
-        async function cargarTickets() {
-            try {
-                const res     = await fetch('/api/dashboard/tickets');
-                const data    = await res.json();
-                const tbody   = document.getElementById('tabla-tickets');
-
-                if (!data.recientes || data.recientes.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="p-5 text-center text-gray-400">Sin tickets</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = data.recientes.map(t => `
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="p-5 font-bold">#TK-${t.id_ticket}</td>
-                        <td class="p-5">
-                            <p class="font-bold">${t.titulo}</p>
-                            <p class="text-sm text-gray-500">${t.cliente || '—'}</p>
-                        </td>
-                        <td class="p-5">
-                            <span class="px-3 py-1 rounded-full text-xs font-bold ${colorEstado(t.estado)}">${t.estado}</span>
-                        </td>
-                        <td class="p-5 font-bold ${colorPrioridad(t.prioridad)}">${t.prioridad}</td>
-                    </tr>
-                `).join('');
-            } catch (err) {
-                console.error('Error cargando tickets:', err);
-            }
-        }
-
-        cargarDashboard();
-        cargarTickets();
-    </script>
+    <footer class="text-center text-gray-500 text-sm border-t mt-10 p-4 bg-white rounded-xl">
+            <p>© 2026 ServiceCore Corporation</p>
+    </footer>
+    
+    <script src="../../js/dashboard_admin.js"></script>
 </body>
 </html>

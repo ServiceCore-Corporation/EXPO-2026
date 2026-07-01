@@ -1,6 +1,6 @@
 <?php
 define('ROL_REQUERIDO', 5);
-require_once 'seguridad.php';
+require_once '../../seguridad.php';
 $nombreUsuario = htmlspecialchars($_SESSION['nombre']);
 $idUsuario     = (int)$_SESSION['usuario_id'];
 ?>
@@ -10,18 +10,11 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Cliente | ServiceCore</title>
+    <link rel="icon" type="image/png" href="../../img/LogoNav.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background: #f5f7ff; }
-        .tarjeta { background: white; border-radius: 16px; padding: 24px; border: 1px solid #dfe7fa; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: .3s; }
-        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; color: #c7c9ff; transition: .3s; }
-        .menu-item:hover { background: rgba(255,255,255,.08); color: white; transform: translateX(5px); }
-        .menu-item.activo { background: #5750ad; color: white; }
-        /* Modal */
-        .modal-fondo { position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;display:flex;align-items:center;justify-content:center; }
-    </style>
+    <link rel="stylesheet" href="../../css/dashboard_cliente.css">
 </head>
 <body>
 
@@ -29,22 +22,31 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
     <header class="fixed top-0 left-64 right-0 h-16 bg-white shadow flex items-center justify-between px-8 z-50">
         <div class="flex items-center gap-4">
             <span class="material-symbols-outlined text-[#5750ad]">menu</span>
-            <h1 class="text-xl font-bold text-[#1e1858]">Mesa de Ayuda</h1>
+            <div>
+                <p class="text-sm text-gray-500">Mesa de Ayuda</p>
+                <h1 class="text-xl font-bold text-[#1e1858]">Mis Tickets</h1>
+            </div>
         </div>
         <div class="relative flex items-center gap-4">
-            <span class="material-symbols-outlined cursor-pointer">notifications</span>
-            <div class="text-right">
-                <p class="font-bold"><?= $nombreUsuario ?></p>
-                <p class="text-sm text-gray-500">Cliente</p>
+            <div class="hidden md:flex items-center gap-4">
+                
+                <span class="material-symbols-outlined cursor-pointer">notifications</span>
+                <div class="text-right">
+                    <p class="font-bold"><?= $nombreUsuario ?></p>
+                    <p class="text-sm text-gray-500">Cliente</p>
+                </div>
             </div>
             <div id="botonUsuario" class="w-10 h-10 rounded-full cursor-pointer border-2 border-[#5750ad] bg-[#5750ad] flex items-center justify-center text-white font-bold">
                 <?= mb_strtoupper(mb_substr($_SESSION['nombre'], 0, 1)) ?>
             </div>
             <div id="menuUsuario" class="hidden absolute right-0 top-14 w-52 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50">
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
+                <a href="perfil.php" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
+                    <span class="material-symbols-outlined text-gray-600">settings</span>Configuración
+                </a>
+                <a href="perfil.php" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
                     <span class="material-symbols-outlined text-gray-600">person</span>Perfil
                 </a>
-                <a href="logout.php" class="flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition">
+                <a href="../../logout.php" class="flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition">
                     <span class="material-symbols-outlined">logout</span>Cerrar Sesión
                 </a>
             </div>
@@ -52,19 +54,24 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
     </header>
 
     <!-- MENÚ LATERAL -->
-    <aside class="fixed left-0 top-0 w-64 h-full bg-[#1e1858] text-white p-6">
+    <aside class="fixed left-0 top-0 w-64 h-screen bg-[#1e1858] text-white p-6 flex flex-col">
         <div class="flex flex-col items-center mb-8">
-            <img src="img/logoSC.png" alt="Logo" class="w-20 h-20 object-contain mb-4">
+            <img src="../../img/logoSC.png" alt="Logo" class="w-20 h-20 object-contain mb-4">
             <h6 class="text-lg font-bold text-center leading-6">ServiceCore<br>Corporation</h6>
         </div>
-        <nav class="space-y-2">
+        <nav class="flex flex-col flex-1 gap-2">
             <a href="dashboard_cliente.php" class="menu-item activo">
                 <span class="material-symbols-outlined">confirmation_number</span>Mis Tickets
             </a>
-            <a href="#" class="menu-item">
+            <a href="chat_cliente.php" class="menu-item">
                 <span class="material-symbols-outlined">history</span>Historial
             </a>
         </nav>
+        <div class="flex-grow"></div>
+        <a href="../../logout.php" class="mt-auto flex items-center justify-center gap-3 w-full py-3 rounded-xl border-2 border-red-500 text-red-400 font-semibold transition-all duration-300 hover:bg-red-500 hover:text-white hover:shadow-lg">
+            <span class="material-symbols-outlined">logout</span>
+            Cerrar Sesión
+        </a>
     </aside>
 
     <!-- MODAL NUEVO TICKET -->
@@ -106,8 +113,30 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
         </div>
     </div>
 
+    <!-- MODAL CHAT -->
+    <div id="modalChat" class="modal-fondo hidden">
+        <div class="modal-chat-caja">
+            <div class="chat-encabezado">
+                <div class="chat-encabezado-info">
+                    <span id="chatTituloTicket">Conversación</span>
+                    <small id="chatEstadoTicket"></small>
+                </div>
+                <button onclick="cerrarModalChat()" style="background:none;border:none;color:white;cursor:pointer;">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div id="chatMensajes" class="chat-mensajes"></div>
+            <form id="chatFormulario" class="chat-formulario-area">
+                <input id="chatInput" class="chat-input" type="text" placeholder="Escribe un mensaje..." autocomplete="off">
+                <button type="submit" class="chat-boton-enviar">
+                    <span class="material-symbols-outlined">send</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- CONTENIDO PRINCIPAL -->
-    <main class="ml-64 pt-24 px-8 pb-10">
+    <main class="contenido ml-64 pt-24 px-8 pb-10">
         <section class="flex justify-between items-center mb-8">
             <div>
                 <h2 class="text-4xl font-bold text-[#1e1858]">Mis Tickets</h2>
@@ -149,20 +178,21 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
                             <th class="p-5 text-left">Prioridad</th>
                             <th class="p-5 text-left">Agente</th>
                             <th class="p-5 text-left">Fecha</th>
+                            <th class="p-5 text-left">Chat</th>
                         </tr>
                     </thead>
                     <tbody id="tabla-tickets">
-                        <tr><td colspan="6" class="p-5 text-center text-gray-400">Cargando...</td></tr>
+                        <tr><td colspan="7" class="p-5 text-center text-gray-400">Cargando...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
-
-        <footer class="text-center text-gray-500 text-sm border-t mt-10 p-4 bg-white rounded-xl">
-            <p>© 2026 ServiceCore Corporation</p>
-        </footer>
     </main>
+    <footer class="text-center text-gray-500 text-sm border-t mt-10 p-4 bg-white rounded-xl">
+        <p>© 2026 ServiceCore Corporation</p>
+    </footer>
 
+    <script src="js/api.js"></script>
     <script>
         const botonUsuario = document.getElementById("botonUsuario");
         const menuUsuario  = document.getElementById("menuUsuario");
@@ -188,7 +218,6 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
         function abrirModal() { document.getElementById('modalNuevoTicket').classList.remove('hidden'); }
         function cerrarModal() { document.getElementById('modalNuevoTicket').classList.add('hidden'); }
 
-        // Cerrar modal al hacer click fuera
         document.getElementById('modalNuevoTicket').addEventListener('click', function(e) {
             if (e.target === this) cerrarModal();
         });
@@ -273,7 +302,7 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
 
                 const tbody = document.getElementById('tabla-tickets');
                 tbody.innerHTML = lista.length === 0
-                    ? '<tr><td colspan="6" class="p-5 text-center text-gray-400">No tienes tickets aún</td></tr>'
+                    ? '<tr><td colspan="7" class="p-5 text-center text-gray-400">No tienes tickets aún</td></tr>'
                     : lista.map(t => `
                         <tr class="hover:bg-gray-50 transition">
                             <td class="p-5 font-bold">#TK-${t.id_ticket}</td>
@@ -282,12 +311,125 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
                             <td class="p-5 font-bold ${colorPrioridad(t.prioridad)}">${t.prioridad || '—'}</td>
                             <td class="p-5 text-gray-500">${t.agente || 'Sin asignar'}</td>
                             <td class="p-5 text-gray-500 text-sm">${new Date(t.fecha_creacion).toLocaleDateString('es-GT')}</td>
+                            <td class="p-5">
+                                <button onclick="abrirModalChat(${t.id_ticket}, '${(t.titulo || '').replace(/'/g, "\\'")}', '${t.estado || ''}')" class="text-[#5750ad] hover:scale-110 transition">
+                                    <span class="material-symbols-outlined">chat</span>
+                                </button>
+                            </td>
                         </tr>
                     `).join('');
             } catch (err) {
                 console.error('Error cargando tickets:', err);
             }
         }
+
+        let chatTicketActivo = null;
+        let chatUltimoId     = 0;
+        let chatPolling       = null;
+        const idUsuarioActual = <?= $idUsuario ?>;
+
+        function escHtml(s) {
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function construirBurbuja(m) {
+            const esMio = parseInt(m.id_usuario) === idUsuarioActual;
+            const hora  = new Date(m.fecha_envio).toLocaleTimeString('es-GT', { hour: '2-digit', minute: '2-digit' });
+            return `<div class="fila-mensaje ${esMio ? 'propio' : 'ajeno'}">
+                <div class="burbuja-mensaje ${esMio ? 'propio' : 'ajeno'}">
+                    ${!esMio ? `<p class="remitente-mensaje">${escHtml(m.remitente || 'Agente')}</p>` : ''}
+                    <p class="contenido-mensaje">${escHtml(m.contenido)}</p>
+                    <span class="hora-mensaje">${hora}</span>
+                </div>
+            </div>`;
+        }
+
+        function pintarMensajes(lista) {
+            const cont = document.getElementById('chatMensajes');
+            if (lista.length === 0) {
+                cont.innerHTML = '<p class="chat-vacio">Aún no hay mensajes. Escribe el primero.</p>';
+                return;
+            }
+            cont.innerHTML = lista.map(construirBurbuja).join('');
+            cont.scrollTop = cont.scrollHeight;
+        }
+
+        function agregarMensajes(lista) {
+            if (lista.length === 0) return;
+            const cont = document.getElementById('chatMensajes');
+            const vacio = cont.querySelector('.chat-vacio');
+            if (vacio) vacio.remove();
+            cont.insertAdjacentHTML('beforeend', lista.map(construirBurbuja).join(''));
+            cont.scrollTop = cont.scrollHeight;
+            chatUltimoId = lista[lista.length - 1].id_mensaje;
+        }
+
+        async function abrirModalChat(idTicket, titulo, estado) {
+            chatTicketActivo = idTicket;
+            chatUltimoId     = 0;
+            detenerPollingChat();
+
+            document.getElementById('modalChat').classList.remove('hidden');
+            document.getElementById('chatTituloTicket').textContent = `#TK-${idTicket} — ${titulo}`;
+            document.getElementById('chatEstadoTicket').textContent = estado ? `Estado: ${estado}` : '';
+            document.getElementById('chatMensajes').innerHTML = '<p class="chat-vacio">Cargando conversación...</p>';
+
+            try {
+                const historial = await peticion(`/api/mensajes/ticket/${idTicket}`);
+                chatUltimoId = historial.length > 0 ? historial[historial.length - 1].id_mensaje : 0;
+                pintarMensajes(historial);
+                await peticion(`/api/mensajes/ticket/${idTicket}/leidos`, 'PATCH');
+                iniciarPollingChat();
+            } catch (error) {
+                document.getElementById('chatMensajes').innerHTML = '<p class="chat-vacio">No se pudo cargar la conversación.</p>';
+                console.error('Error abriendo chat:', error);
+            }
+        }
+
+        function cerrarModalChat() {
+            document.getElementById('modalChat').classList.add('hidden');
+            detenerPollingChat();
+            chatTicketActivo = null;
+        }
+
+        function iniciarPollingChat() {
+            chatPolling = setInterval(async () => {
+                if (!chatTicketActivo) return;
+                try {
+                    const nuevos = await peticion(`/api/mensajes/nuevos/${chatTicketActivo}/${chatUltimoId}`);
+                    if (nuevos.length > 0) {
+                        agregarMensajes(nuevos);
+                        await peticion(`/api/mensajes/ticket/${chatTicketActivo}/leidos`, 'PATCH');
+                    }
+                } catch (error) {
+                    console.error('Error en polling:', error);
+                }
+            }, 4000);
+        }
+
+        function detenerPollingChat() {
+            if (chatPolling) { clearInterval(chatPolling); chatPolling = null; }
+        }
+
+        document.getElementById('chatFormulario').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input   = document.getElementById('chatInput');
+            const texto   = input.value.trim();
+            if (!texto || !chatTicketActivo) return;
+
+            input.value = '';
+            try {
+                const mensajeCreado = await peticion('/api/mensajes', 'POST', { id_ticket: chatTicketActivo, contenido: texto });
+                agregarMensajes([mensajeCreado]);
+            } catch (error) {
+                alert(error.message || 'No se pudo enviar el mensaje');
+                input.value = texto;
+            }
+        });
+
+        document.getElementById('modalChat').addEventListener('click', function(e) {
+            if (e.target === this) cerrarModalChat();
+        });
 
         cargarSelectores();
         cargarTickets();

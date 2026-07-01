@@ -6,40 +6,10 @@ ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', 'error.log');
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-require 'vendor/autoload.php';
+require 'conexion.php';
 
 $success = false; // Variable necesaria para el HTML
 
-// Cargar variables .env
-function cargarEnv(string $ruta): void
-{
-    if (!file_exists($ruta)) return;
-
-    foreach (file($ruta, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $linea) {
-
-        $linea = trim($linea);
-
-        if ($linea === '' || str_starts_with($linea, '#')) continue;
-        if (!str_contains($linea, '=')) continue;
-
-        [$clave, $valor] = explode('=', $linea, 2);
-        $_ENV[trim($clave)] = trim($valor);
-    }
-}
-
-cargarEnv(__DIR__ . '/.env');
-
-// Conexión
-$conexion = new mysqli("localhost", "u936997481_ServiCore", "ServiceCore_2026", "u936997481_ServiceCore");
-
-if ($conexion->connect_error) {
-    die("Error de conexión");
-}
-
-// Validar correo real
 function correoExisteRealmente(string $correo): bool
 {
     if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) return false;
@@ -51,113 +21,50 @@ function correoExisteRealmente(string $correo): bool
     return true;
 }
 
-// Enviar código de verificación
-function enviarCodigoVerificacion(string $correoUsuario, string $nombreUsuario, string $codigo): bool
-{
-    $mail = new PHPMailer(true);
-
-    try {
-
-        $mail->isSMTP();
-        $mail->Host       = $_ENV['MAIL_HOST'];
-        $mail->SMTPAuth   = true;
-        $mail->Username   = $_ENV['MAIL_USERNAME'];
-        $mail->Password   = $_ENV['MAIL_PASSWORD'];
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = (int) $_ENV['MAIL_PORT'];
-        $mail->CharSet    = 'UTF-8';
-
-        $mail->setFrom($_ENV['MAIL_USERNAME'], $_ENV['MAIL_FROM_NAME']);
-        $mail->addAddress($correoUsuario, $nombreUsuario);
-
-        $mail->isHTML(true);
-        $mail->Subject = 'Código de verificación - ServiceCore';
-
-        $mail->Body = "
-            <div style='font-family:Segoe UI,sans-serif;max-width:480px;margin:auto;
-                        background:#0f172a;color:#f1f5f9;border-radius:12px;padding:40px'>
-                <h2 style='margin:0 0 8px;font-size:22px'>Verificación de cuenta</h2>
-                <p style='color:#94a3b8;margin:0 0 28px'>
-                    Hola <strong>$nombreUsuario</strong>, este es tu código de verificación:
-                </p>
-                <div style='background:#1e293b;border:1px solid #334155;border-radius:10px;
-                            padding:24px;text-align:center;margin-bottom:24px'>
-                    <span style='font-size:38px;font-weight:700;letter-spacing:10px;color:#3b82f6'>
-                        $codigo
-                    </span>
-                </div>
-                <p style='color:#64748b;font-size:13px;margin:0'>
-                    Expira en <strong style='color:#f1f5f9'>10 minutos</strong>.<br>
-                    Si no solicitaste esto, ignora este correo.
-                </p>
-            </div>
-        ";
-
-        $mail->AltBody = "Tu código ServiceCore: $codigo";
-
-        $mail->send();
-        return true;
-
-    } catch (Exception $e) {
-        error_log("Error enviando correo: " . $mail->ErrorInfo);
-        return false;
-    }
-}
-
-// Procesar registro
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    // Solo nombre, sin apellido
     $nombre        = trim($_POST['nombre'] ?? '');
     $correo        = trim($_POST['correo'] ?? '');
     $password      = $_POST['password'] ?? '';
     $confirmarPass = $_POST['confirmar'] ?? ''; // ← nombre correcto del campo
     $id_rol        = (int)($_POST['id_rol'] ?? 5); // ← tomar del formulario
 
-    // Campos vacíos
     if (empty($nombre) || empty($correo) || empty($password) || empty($confirmarPass)) {
         header("Location: registrarse.php?error=Todos+los+campos+son+obligatorios");
         exit();
     }
 
-    // Nombre muy corto
     if (strlen($nombre) < 3) {
         header("Location: registrarse.php?error=Nombre+muy+corto");
         exit();
     }
 
-    // Correo válido
     if (!correoExisteRealmente($correo)) {
         header("Location: registrarse.php?error=Correo+invalido");
         exit();
     }
 
-    // Contraseña mínima
     if (strlen($password) < 8) {
         header("Location: registrarse.php?error=La+contrasena+debe+tener+8+caracteres");
         exit();
     }
 
-    // Mayúscula
     if (!preg_match('/[A-Z]/', $password)) {
         header("Location: registrarse.php?error=Debe+tener+una+mayuscula");
         exit();
     }
 
-    // Número
     if (!preg_match('/[0-9]/', $password)) {
         header("Location: registrarse.php?error=Debe+tener+un+numero");
         exit();
     }
 
-    // Contraseñas iguales
     if ($password !== $confirmarPass) {
         header("Location: registrarse.php?error=Las+contrasenas+no+coinciden");
         exit();
     }
 
-    // Verificar correo duplicado
-    $verificar = $conexion->prepare("SELECT id_usuario FROM usuario WHERE correo = ?");
+    $verificar = $conn->prepare("SELECT id_usuario FROM usuario WHERE correo = ?");
     $verificar->bind_param("s", $correo);
     $verificar->execute();
     $resultado = $verificar->get_result();
@@ -169,11 +76,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $verificar->close();
 
-    // Hash contraseña
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
-    // Insertar usuario — id_empresa = 1 por defecto
-    $stmt = $conexion->prepare(
+    $stmt = $conn->prepare(
         "INSERT INTO usuario (nombre, correo, pass, id_rol, activo, id_empresa)
          VALUES (?, ?, ?, ?, 1, 1)"
     );
@@ -185,50 +90,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    $id_usuario = $stmt->insert_id;
     $stmt->close();
+    $conn->close();
 
-    // Generar código 2FA
-    $codigo     = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-    $expiracion = date('Y-m-d H:i:s', strtotime('+10 minutes'));
-
-    // Guardar código
-    $guardarCodigo = $conexion->prepare(
-        "INSERT INTO usuarios_2fa (id_usuario, tipo, secreto, codigo_temporal, expiracion_codigo, activo)
-         VALUES (?, 'email', '', ?, ?, 1)"
-    );
-    $guardarCodigo->bind_param("iss", $id_usuario, $codigo, $expiracion);
-    $guardarCodigo->execute();
-    $guardarCodigo->close();
-
-    // Enviar correo
-    $enviado = enviarCodigoVerificacion($correo, $nombre, $codigo);
-
-    if (!$enviado) {
-        // Eliminar usuario si no se pudo enviar el correo
-        $eliminar = $conexion->prepare("DELETE FROM usuario WHERE id_usuario = ?");
-        $eliminar->bind_param("i", $id_usuario);
-        $eliminar->execute();
-        $eliminar->close();
-
-        header("Location: registrarse.php?error=No+se+pudo+enviar+el+correo");
-        exit();
-    }
-
-    // Sesión temporal para 2FA
-    session_regenerate_id(true);
-    $_SESSION['2fa_id_usuario'] = $id_usuario;
-    $_SESSION['2fa_correo']     = $correo;
-
-    $conexion->close();
-
-    header("Location: verificar_2fa.php");
+    header("Location: login.php?registro=exitoso");
     exit();
 }
 
-$conexion->close();
+$conn->close();
 
-// Capturar error de URL
 $error = isset($_GET['error']) ? htmlspecialchars($_GET['error']) : '';
 ?>
 <!DOCTYPE html>
@@ -237,317 +107,11 @@ $error = isset($_GET['error']) ? htmlspecialchars($_GET['error']) : '';
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Crear Cuenta | ServiceCore Corp.</title>
-
+<link rel="icon" type="image/png" href="img/LogoNav.png">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 
-<style>
-:root {
-  --fondo:#1e1858;
-  --fondo-medio:#2a2470;
-  --acento:#5750ad;
-  --acento-claro:#7773eb;
-  --blanco:#fff;
-  --texto-suave:#c3c0e8;
-  --texto-tenue:#8f8cc4;
-  --borde:#4a44b8;
-  --error:#ff6b6b;
-  --radio-md:0.5rem;
-  --radio-lg:0.75rem;
-  --fuente:'Poppins',sans-serif;
-  --fuente-titulo:'Montserrat',sans-serif;
-}
-
-*{margin:0;padding:0;box-sizing:border-box;}
-
-body{
-  font-family:var(--fuente);
-  background:#1e1858;
-  color:#fff;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-}
-
-a{text-decoration:none;color:inherit;}
-button{border:none;cursor:pointer;}
-
-/* ENCABEZADO */
-.encabezado{
-  background:rgba(30,24,88,0.85);
-  border-bottom:1px solid var(--borde);
-}
-
-.encabezado-interior{
-  max-width:1280px;
-  margin:auto;
-  padding:1rem 24px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.marca{display:flex;align-items:center;gap:10px;}
-
-.logo{width:45px;height:35px;}
-
-.marca-nombre{
-  font-family:var(--fuente-titulo);
-  font-weight:700;
-  font-size:20px;
-}
-
-.nav-encabezado{display:flex;gap:20px;}
-.nav-encabezado a{font-size:13px;color:var(--texto-suave);}
-
-/* CONTENIDO */
-.contenido{
-  flex:1;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:40px 24px;
-}
-
-.envoltorio{width:100%;max-width:560px;}
-
-.tarjeta-envuelta{
-  border-radius:var(--radio-lg);
-  padding:1px;
-  background:var(--borde);
-}
-
-.tarjeta{
-  background:rgba(30,24,88,0.95);
-  border-radius:var(--radio-lg);
-  overflow:hidden;
-}
-
-.tarjeta-encabezado{
-  background:linear-gradient(135deg,var(--acento),var(--fondo-medio));
-  padding:20px 24px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.icono-tarjeta-encabezado{
-  background:rgba(255,255,255,0.15);
-  padding:8px;
-  border-radius:8px;
-}
-
-.tarjeta-cuerpo{
-  padding:32px;
-  display:flex;
-  flex-direction:column;
-  gap:24px;
-}
-
-/* PASOS */
-.pasos{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.paso{display:flex;flex-direction:column;align-items:center;gap:5px;}
-
-.paso-circulo{
-  width:32px;
-  height:32px;
-  border-radius:50%;
-  border:2px solid var(--borde);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-size:12px;
-}
-
-.paso.activo .paso-circulo{
-  background:linear-gradient(135deg,var(--acento),var(--acento-claro));
-  border-color:var(--acento-claro);
-}
-
-.conector{
-  flex:1;
-  height:2px;
-  background:var(--borde);
-  margin:0 5px 18px;
-}
-
-/* PANELES */
-.panel-paso{display:none;flex-direction:column;gap:16px;}
-.panel-paso.visible{display:flex;}
-
-/* GRID */
-.fila-doble{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-}
-
-@media(max-width:480px){
-  .fila-doble{grid-template-columns:1fr;}
-}
-
-/* CAMPOS */
-.campo{display:flex;flex-direction:column;gap:5px;}
-
-.etiqueta-campo{font-size:12px;color:var(--texto-suave);}
-
-.caja-entrada{position:relative;}
-
-.icono-entrada{
-  position:absolute;
-  top:50%;
-  left:12px;
-  transform:translateY(-50%);
-  color:var(--texto-tenue);
-  font-size:20px;
-}
-
-.entrada{
-  width:100%;
-  padding:12px 16px 12px 42px;
-  border-radius:8px;
-  border:1px solid var(--borde);
-  background:rgba(30,24,88,0.6);
-  color:#fff;
-  outline:none;
-  font-family:var(--fuente);
-  font-size:14px;
-}
-
-.entrada:focus{border-color:var(--acento-claro);}
-
-.entrada-error{border-color:var(--error)!important;}
-
-.msg-error{display:none;color:var(--error);font-size:11px;}
-.msg-error.visible{display:block;}
-
-/* ACCIONES */
-.acciones{display:flex;gap:16px;}
-
-.boton-principal{
-  flex:1;
-  background:linear-gradient(135deg,var(--acento),var(--acento-claro));
-  color:#fff;
-  padding:13px;
-  border-radius:8px;
-  font-weight:700;
-  font-family:var(--fuente);
-  font-size:14px;
-}
-
-.boton-secundario{
-  padding:13px 20px;
-  border:1px solid var(--borde);
-  border-radius:8px;
-  color:var(--texto-suave);
-  background:transparent;
-  font-family:var(--fuente);
-  font-size:14px;
-}
-
-/* ROLES */
-.roles-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
-}
-
-.rol-opcion{display:none;}
-
-.rol-tarjeta{
-  border:1px solid var(--borde);
-  border-radius:8px;
-  padding:12px;
-  text-align:center;
-  cursor:pointer;
-  font-size:14px;
-  transition:0.2s;
-}
-
-.rol-opcion:checked + .rol-tarjeta{
-  border-color:var(--acento-claro);
-  background:rgba(119,115,235,0.2);
-}
-
-/* TÉRMINOS */
-.terminos{
-  display:flex;
-  gap:10px;
-  padding:12px;
-  border:1px solid var(--borde);
-  border-radius:8px;
-  align-items:center;
-  font-size:14px;
-}
-
-.texto-login{
-  text-align:center;
-  color:var(--texto-suave);
-  font-size:14px;
-}
-
-.texto-login a{color:#ff6b6b;}
-
-/* ALERTA SERVIDOR */
-.alerta-servidor{
-  background:rgba(255,107,107,0.15);
-  border:1px solid #ff6b6b;
-  color:#ff6b6b;
-  padding:12px;
-  border-radius:8px;
-  font-size:13px;
-  text-align:center;
-}
-
-/* PANEL ÉXITO */
-.panel-exito{
-  display:none;
-  flex-direction:column;
-  align-items:center;
-  text-align:center;
-  gap:16px;
-}
-
-.panel-exito.visible{display:flex;}
-
-.circulo-exito{
-  width:72px;
-  height:72px;
-  border-radius:50%;
-  background:linear-gradient(135deg,#16a34a,#22c55e);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-
-/* PIE */
-.pie{
-  background:rgba(30,24,88,0.85);
-  border-top:1px solid var(--borde);
-}
-
-.pie-interior{
-  max-width:1280px;
-  margin:auto;
-  padding:24px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:13px;
-  color:var(--texto-suave);
-}
-
-/* SELECT */
-select.entrada option{
-  background:#1e1858;
-  color:#fff;
-}
-</style>
+<link rel="stylesheet" href="css/registrarse.css">
 </head>
 
 <body>
@@ -739,12 +303,6 @@ select.entrada option{
 
 <script>
 
-<?php if ($success): ?>
-document.getElementById('pasos').style.display = 'none';
-document.getElementById('formRegistro').style.display = 'none';
-<?php endif; ?>
-
-// ── Helpers ──────────────────────────────────────────────
 function mostrarPaso(n) {
   [1, 2, 3].forEach(i => {
     document.getElementById(`panel-${i}`).classList.toggle('visible', i === n);
@@ -766,7 +324,6 @@ function setError(inputId, errorId, condition, mensaje) {
   return !condition;
 }
 
-// ── Validaciones en tiempo real (blur) ───────────────────
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 document.getElementById('nombre').addEventListener('blur', function () {
@@ -792,7 +349,6 @@ document.getElementById('password').addEventListener('input', function () {
   else if (!/[0-9]/.test(pass)) msg = 'Debe tener al menos un número';
   setError('password', 'err-password', msg !== '', msg);
 
-  // Revalidar confirmación si ya tiene algo escrito
   const conf = document.getElementById('confirmar').value;
   if (conf) {
     setError('confirmar', 'err-confirmar', pass !== conf, 'Las contraseñas no coinciden');
@@ -804,7 +360,6 @@ document.getElementById('confirmar').addEventListener('input', function () {
   setError('confirmar', 'err-confirmar', this.value !== pass, 'Las contraseñas no coinciden');
 });
 
-// ── PASO 1: Siguiente ────────────────────────────────────
 document.getElementById('btnPaso1').addEventListener('click', () => {
 
   const nombre = document.getElementById('nombre').value.trim();
@@ -816,7 +371,6 @@ document.getElementById('btnPaso1').addEventListener('click', () => {
   if (v1 && v2) mostrarPaso(2);
 });
 
-// ── PASO 2: Siguiente ────────────────────────────────────
 document.getElementById('btnPaso2').addEventListener('click', () => {
 
   const pass = document.getElementById('password').value;
@@ -834,11 +388,9 @@ document.getElementById('btnPaso2').addEventListener('click', () => {
   if (v1 && v2) mostrarPaso(3);
 });
 
-// ── Navegación atrás ─────────────────────────────────────
 document.getElementById('btnAtras2').addEventListener('click', () => mostrarPaso(1));
 document.getElementById('btnAtras3').addEventListener('click', () => mostrarPaso(2));
 
-// ── PASO 3: Submit ───────────────────────────────────────
 document.getElementById('btnRegistrar').addEventListener('click', (e) => {
   const terms = document.getElementById('terminos').checked;
   const span  = document.getElementById('err-terminos');

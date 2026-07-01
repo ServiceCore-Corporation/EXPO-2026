@@ -1,5 +1,9 @@
 <?php
-// Configuración visual de cada rol (icono, color de acento, clase de badge).
+define('ROL_REQUERIDO', 2);
+require_once '../../seguridad.php';
+$nombreUsuario = htmlspecialchars($_SESSION['nombre']);
+$correoUsuario = htmlspecialchars($_SESSION['correo']);
+
 $rolesConfig = [
     'Administrador' => ['icon' => 'shield_person',      'badge' => 'badge-purple', 'accent' => 'purple'],
     'Supervisor'    => ['icon' => 'supervisor_account',  'badge' => 'badge-blue',   'accent' => 'blue'],
@@ -7,7 +11,6 @@ $rolesConfig = [
     'Cliente'       => ['icon' => 'person',               'badge' => 'badge-gray',   'accent' => 'gray'],
 ];
 
-// En producción esto vendría de una consulta a la tabla de usuarios.
 $usuariosTodos = [
     ['id' => 'USR-001', 'nombre' => 'Alex Rivera',          'correo' => 'alex.rivera@servicecore.com',      'rol' => 'Administrador', 'estado' => 'Activo',   'detalle' => 'Tecnología',                  'fecha' => '14 feb 2024'],
     ['id' => 'USR-002', 'nombre' => 'Daniela Castillo',      'correo' => 'daniela.castillo@servicecore.com', 'rol' => 'Administrador', 'estado' => 'Activo',   'detalle' => 'Operaciones',                 'fecha' => '02 ene 2023'],
@@ -24,7 +27,6 @@ $usuariosTodos = [
     ['id' => 'USR-032', 'nombre' => 'Elena Rodríguez',       'correo' => 'elena.rodriguez@xyz.com',          'rol' => 'Cliente',       'estado' => 'Inactivo', 'detalle' => 'Empresa XYZ',                 'fecha' => '20 dic 2024'],
 ];
 
-// Segmentación principal: agrupar usuarios por rol.
 $usuariosPorRol = [];
 foreach (array_keys($rolesConfig) as $rolNombre) {
     $usuariosPorRol[$rolNombre] = array_values(array_filter(
@@ -59,67 +61,84 @@ function inicialesRoles($nombre) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usuarios por Rol — ServiceCore</title>
+    <link rel="icon" type="image/png" href="../../img/LogoNav.png">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-    <link rel="stylesheet" href="css/usuarios_roles.css">
+    <link rel="stylesheet" href="../../css/usuarios_roles.css">
 </head>
 <body>
-
-    <aside class="sidebar" id="sidebar">
-        <div class="brand">
-            <img src="img/logogi.png" alt="ServiceCore Corporation" class="logo">
+    <!-- ENCABEZADO -->
+    <header class="fixed top-0 left-64 right-0 h-16 bg-white shadow flex items-center justify-between px-8 z-50">
+        <div class="flex items-center gap-4">
+            <span class="material-symbols-outlined text-[#5750ad]">menu</span>
+            <h1 class="text-xl font-bold text-[#1e1858]">Panel de Empresa</h1>
         </div>
-
-        <nav class="menu">
-            <a href="#" class="menu-item"><span class="material-symbols-outlined">insights</span>Dashboard</a>
-            <a href="#" class="menu-item"><span class="material-symbols-outlined">confirmation_number</span>Tickets</a>
-            <a href="#" class="menu-item active"><span class="material-symbols-outlined">manage_accounts</span>Usuarios por Rol</a>
-            <a href="#" class="menu-item"><span class="material-symbols-outlined">category</span>Categorías</a>
-            <a href="#" class="menu-item"><span class="material-symbols-outlined">history</span>Historial</a>
-        </nav>
-
-        <div class="sidebar-box">
-            <p class="small-title">Resumen rápido</p>
-            <?php foreach ($rolesConfig as $rolNombre => $cfg): ?>
-                <span class="mini-tag"><span class="material-symbols-outlined"><?= $cfg['icon'] ?></span><?= htmlspecialchars($rolNombre) ?> · <?= count($usuariosPorRol[$rolNombre]) ?></span>
-            <?php endforeach; ?>
-        </div>
-    </aside>
-
-    <header class="topbar">
-        <button class="icon-btn mobile-only" id="btnSidebar"><span class="material-symbols-outlined">menu</span></button>
-        <div>
-            <p class="eyebrow">Panel general</p>
-            <h2>Usuarios por Rol</h2>
-        </div>
-        <div class="top-actions">
-            <div class="search-box">
-                <span class="material-symbols-outlined">search</span>
-                <input type="search" id="buscadorUsuarios" placeholder="Buscar por nombre o correo...">
+        <div class="relative flex items-center gap-4">
+            <span class="material-symbols-outlined cursor-pointer">notifications</span>
+            <div class="text-right">
+                <p class="font-bold"><?= $nombreUsuario ?></p>
+                <p class="text-sm text-gray-500">Admin Empresa</p>
             </div>
-            
-                <div class="avatar">AR</div>
-                <div>
-                    <strong>Alex Rivera</strong>
-                    <span>ServiceCore Corporation / Administrador</span>
-                </div>
-                <span class="material-symbols-outlined">expand_more</span>
+            <div id="botonUsuario" class="w-10 h-10 rounded-full cursor-pointer border-2 border-[#5750ad] bg-[#5750ad] flex items-center justify-center text-white font-bold">
+                <?= mb_strtoupper(mb_substr($_SESSION['nombre'], 0, 1)) ?>
+            </div>
+            <div id="menuUsuario" class="hidden absolute right-0 top-14 w-52 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
+                    <span class="material-symbols-outlined text-gray-600">settings</span>Configuración
+                </a>
+                <a href="perfil.php" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
+                    <span class="material-symbols-outlined text-gray-600">person</span>Perfil
+                </a>
+                <a href="../../logout.php" class="flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition">
+                    <span class="material-symbols-outlined">logout</span>Cerrar Sesión
+                </a>
             </div>
         </div>
     </header>
 
-    <main class="content">
+    <!-- MENÚ LATERAL -->
+    <aside class="fixed left-0 top-0 w-64 h-screen bg-[#1e1858] text-white p-6 flex flex-col">
+        <div class="flex flex-col items-center mb-8">
+            <img src="../../img/logoSC.png" alt="Logo" class="w-20 h-20 object-contain mb-4">
+            <h6 class="text-lg font-bold text-center leading-6">ServiceCore<br>Corporation</h6>
+        </div>
+        <nav class="flex flex-col flex-1 gap-2">
+            <a href="dashboard_admin_emp.php" class="menu-item ">
+                <span class="material-symbols-outlined">dashboard</span>Inicio
+            </a>
+            <a href="gestion_usuarios.php" class="menu-item activo">
+                <span class="material-symbols-outlined">group</span>Gestion de Usuarios
+            </a>
+            <a href="crear_categorias.php" class="menu-item">
+                <span class="material-symbols-outlined">category</span>Gestion de Categorías
+            </a>
+            <a href="asignar_categoria.php" class="menu-item">
+                <span class="material-symbols-outlined">sell</span>Asignar Categoría
+            </a>
+            <a href="#" class="menu-item">
+                <span class="material-symbols-outlined">history</span>Historial
+            </a>
+            
+            <div class="flex-grow"></div>
+            <!-- Cerrar sesión -->
+            <a href="../../logout.php"class="mt-auto flex items-center justify-center gap-3 w-full py-3 rounded-xl border-2 border-red-500 text-red-400 font-semibold transition-all duration-300 hover:bg-red-500 hover:text-white hover:shadow-lg">
+                <span class="material-symbols-outlined">logout</span>
+                Cerrar Sesión
+            </a>
+            
+        </nav>
+    </aside>
 
-        <section class="page-head">
-            <nav class="breadcrumb" aria-label="Ubicación actual">
-                <a href="#">Panel</a>
-                <span class="material-symbols-outlined">chevron_right</span>
-                <a href="#">Usuarios</a>
-                <span class="material-symbols-outlined">chevron_right</span>
-                <span>Por Rol</span>
-            </nav>
-            <h1>Gestión de Usuarios por Rol</h1>
-            <p>Visualiza y administra a todos los usuarios del sistema organizados en tarjetas, segmentados según el rol que tienen asignado.</p>
+    <main class="contenido ml-64 pt-24 px-8 pb-10" id="content">
+
+        <!-- Page heading -->
+        <section class="mb-6">
+        <h2 class="text-4xl font-bold text-[#1e1858]">Gestión de Categorías</h2>
+        <p class="text-gray-500 mt-2">
+            Visualiza y administra las categorías de tu empresa que se asignan a los tickets.
+            Las categorías son exclusivas de cada organización.
+        </p>
         </section>
 
         <!-- KPIs / filtros rápidos por rol -->
@@ -147,6 +166,10 @@ function inicialesRoles($nombre) {
         <!-- Barra de controles -->
         <section class="controls-bar">
             <div class="controls-left">
+                <div class="search-box">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="search" id="buscadorUsuarios" placeholder="Buscar por nombre o correo...">
+                </div>
                 <select id="filterEstado" class="input-small">
                     <option value="">Todos los estados</option>
                     <option value="Activo">Solo activos</option>
@@ -216,8 +239,6 @@ function inicialesRoles($nombre) {
                 </div>
             <?php endforeach; ?>
         </section>
-
-        <footer class="footer">© 2026 ServiceCore Corporation — Usuarios segmentados por rol.</footer>
     </main>
 
     <!-- Modal: crear / editar usuario -->
@@ -309,6 +330,11 @@ function inicialesRoles($nombre) {
 
     <div class="toast-container" id="toastContainer"></div>
 
-    <script src="usuarios_roles.js"></script>
+    <footer class="text-center text-gray-500 text-sm border-t mt-10 p-4 bg-white rounded-xl">
+            <p>© 2026 ServiceCore Corporation</p>
+    </footer>
+
+    <script src="../../js/usuarios_roles.js"></script>
+    <script src="../../js/dashboard_admin.js"></script>
 </body>
 </html>

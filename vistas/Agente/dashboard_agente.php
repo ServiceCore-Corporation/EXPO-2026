@@ -1,6 +1,6 @@
 <?php
-define('ROL_REQUERIDO', 4);
-require_once 'seguridad.php';
+define('ROL_REQUERIDO', 3);
+require_once '../../seguridad.php';
 $nombreUsuario = htmlspecialchars($_SESSION['nombre']);
 $idUsuario     = (int)$_SESSION['usuario_id'];
 ?>
@@ -10,16 +10,11 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Agente | ServiceCore</title>
+    <link rel="icon" type="image/png" href="../../img/LogoNav.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background: #f5f7ff; }
-        .tarjeta { background: white; border-radius: 16px; padding: 24px; border: 1px solid #dfe7fa; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: .3s; }
-        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; color: #c7c9ff; transition: .3s; }
-        .menu-item:hover { background: rgba(255,255,255,.08); color: white; transform: translateX(5px); }
-        .menu-item.activo { background: #5750ad; color: white; }
-    </style>
+    <link rel="stylesheet" href="../../css/dashboard_agente.css">
 </head>
 <body>
 
@@ -42,10 +37,10 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
                 <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
                     <span class="material-symbols-outlined text-gray-600">settings</span>Configuración
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
+                <a href="perfil.php" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
                     <span class="material-symbols-outlined text-gray-600">person</span>Perfil
                 </a>
-                <a href="logout.php" class="flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition">
+                <a href="../../logout.php" class="flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition">
                     <span class="material-symbols-outlined">logout</span>Cerrar Sesión
                 </a>
             </div>
@@ -53,13 +48,16 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
     </header>
 
     <!-- MENÚ LATERAL -->
-    <aside class="fixed left-0 top-0 w-64 h-full bg-[#1e1858] text-white p-6">
+    <aside class="fixed left-0 top-0 w-64 h-screen bg-[#1e1858] text-white p-6 flex flex-col">
         <div class="flex flex-col items-center mb-8">
-            <img src="img/logoSC.png" alt="Logo" class="w-20 h-20 object-contain mb-4">
+            <img src="../../img/logoSC.png" alt="Logo" class="w-20 h-20 object-contain mb-4">
             <h6 class="text-lg font-bold text-center leading-6">ServiceCore<br>Corporation</h6>
         </div>
-        <nav class="space-y-2">
+        <nav class="flex flex-col flex-1 gap-2">
             <a href="dashboard_agente.php" class="menu-item activo">
+                <span class="material-symbols-outlined">dashboard</span>Inicio
+            </a>
+            <a href="chat_agente.php" class="menu-item">
                 <span class="material-symbols-outlined">confirmation_number</span>Tickets
             </a>
             <a href="#" class="menu-item">
@@ -68,14 +66,43 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
             <a href="#" class="menu-item">
                 <span class="material-symbols-outlined">insights</span>Estadísticas
             </a>
-            <a href="#" class="menu-item">
-                <span class="material-symbols-outlined">category</span>Categorías
-            </a>
         </nav>
+        <div class="flex-grow"></div>
+        <!-- Cerrar sesión -->
+        <a href="../../logout.php"class="mt-auto flex items-center justify-center gap-3 w-full py-3 rounded-xl border-2 border-red-500 text-red-400 font-semibold transition-all duration-300 hover:bg-red-500 hover:text-white hover:shadow-lg">
+            <span class="material-symbols-outlined">logout</span>
+            Cerrar Sesión
+        </a>
     </aside>
 
+    <!-- MODAL CHAT -->
+    <div id="modalChat" class="modal-fondo hidden">
+        <div class="modal-chat-caja">
+            <div class="chat-encabezado">
+                <div class="chat-encabezado-info">
+                    <span id="chatTituloTicket">Conversación</span>
+                    <small id="chatEstadoTicket"></small>
+                </div>
+                <button onclick="cerrarModalChat()" style="background:none;border:none;color:white;cursor:pointer;">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div id="chatMensajes" class="chat-mensajes"></div>
+            <div class="chat-acciones-rapidas">
+                <button class="chat-boton-accion" onclick="marcarResueltoDesdeChat()">Marcar resuelto</button>
+                <button class="chat-boton-accion" onclick="cerrarTicketDesdeChat()">Cerrar ticket</button>
+            </div>
+            <form id="chatFormulario" class="chat-formulario-area">
+                <input id="chatInput" class="chat-input" type="text" placeholder="Escribe un mensaje..." autocomplete="off">
+                <button type="submit" class="chat-boton-enviar">
+                    <span class="material-symbols-outlined">send</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- CONTENIDO PRINCIPAL -->
-    <main class="ml-64 pt-24 px-8 pb-10">
+    <main class="contenido ml-64 pt-24 px-8 pb-10">
         <section class="mb-8">
             <h2 class="text-4xl font-bold text-[#1e1858]">Panel Principal</h2>
             <p class="text-gray-500 mt-2">Gestión y validación de tickets técnicos.</p>
@@ -155,12 +182,14 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
                 </div>
             </div>
         </section>
-
-        <footer class="text-center text-gray-500 text-sm border-t mt-10 p-4 bg-white rounded-xl">
-            <p>© 2026 ServiceCore Corporation - Datos sincronizados en tiempo real.</p>
-        </footer>
     </main>
 
+    <footer class="text-center text-gray-500 text-sm border-t mt-10 p-4 bg-white rounded-xl">
+            <p>© 2026 ServiceCore Corporation</p>
+    </footer>
+
+    <script src="../../js/api.js"></script>
+    <script src="../../js/dashboard_admin.js"></script>
     <script>
         const botonUsuario = document.getElementById("botonUsuario");
         const menuUsuario  = document.getElementById("menuUsuario");
@@ -178,7 +207,6 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
             t.addEventListener("mouseleave", () => { t.style.transform="translateY(0)"; t.style.boxShadow="0 2px 10px rgba(0,0,0,0.05)"; });
         });
 
-        // Subida de archivo
         document.getElementById('zonaSubida').addEventListener('click', () => document.getElementById('archivoEvidencia').click());
 
         let todosLosTickets  = [];
@@ -213,8 +241,8 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
                     <td class="p-5"><span class="px-3 py-1 rounded-full text-xs font-bold ${colorEstado(t.estado)}">${t.estado}</span></td>
                     <td class="p-5 font-bold ${colorPrioridad(t.prioridad)}">${t.prioridad}</td>
                     <td class="p-5">
-                        <button class="hover:scale-110 transition">
-                            <span class="material-symbols-outlined text-[#5750ad]">edit_note</span>
+                        <button class="hover:scale-110 transition" onclick="event.stopPropagation(); abrirModalChat(${t.id_ticket}, '${(t.titulo || '').replace(/'/g, "\\'")}', '${t.estado || ''}')">
+                            <span class="material-symbols-outlined text-[#5750ad]">chat</span>
                         </button>
                     </td>
                 </tr>
@@ -276,6 +304,141 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
         }
 
         cargarTickets();
+
+        let chatTicketActivo = null;
+        let chatUltimoId     = 0;
+        let chatPolling      = null;
+        const idUsuarioActual = <?= $idUsuario ?>;
+
+        function escHtml(s) {
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function construirBurbuja(m) {
+            const esMio = parseInt(m.id_usuario) === idUsuarioActual;
+            const hora  = new Date(m.fecha_envio).toLocaleTimeString('es-GT', { hour: '2-digit', minute: '2-digit' });
+            return `<div class="fila-mensaje ${esMio ? 'propio' : 'ajeno'}">
+                <div class="burbuja-mensaje ${esMio ? 'propio' : 'ajeno'}">
+                    ${!esMio ? `<p class="remitente-mensaje">${escHtml(m.remitente || 'Cliente')}</p>` : ''}
+                    <p class="contenido-mensaje">${escHtml(m.contenido)}</p>
+                    <span class="hora-mensaje">${hora}</span>
+                </div>
+            </div>`;
+        }
+
+        function pintarMensajes(lista) {
+            const cont = document.getElementById('chatMensajes');
+            if (lista.length === 0) {
+                cont.innerHTML = '<p class="chat-vacio">Aún no hay mensajes. Escribe el primero.</p>';
+                return;
+            }
+            cont.innerHTML = lista.map(construirBurbuja).join('');
+            cont.scrollTop = cont.scrollHeight;
+        }
+
+        function agregarMensajes(lista) {
+            if (lista.length === 0) return;
+            const cont = document.getElementById('chatMensajes');
+            const vacio = cont.querySelector('.chat-vacio');
+            if (vacio) vacio.remove();
+            cont.insertAdjacentHTML('beforeend', lista.map(construirBurbuja).join(''));
+            cont.scrollTop = cont.scrollHeight;
+            chatUltimoId = lista[lista.length - 1].id_mensaje;
+        }
+
+        async function abrirModalChat(idTicket, titulo, estado) {
+            chatTicketActivo = idTicket;
+            chatUltimoId     = 0;
+            detenerPollingChat();
+
+            document.getElementById('modalChat').classList.remove('hidden');
+            document.getElementById('chatTituloTicket').textContent = `#TK-${idTicket} — ${titulo}`;
+            document.getElementById('chatEstadoTicket').textContent = estado ? `Estado: ${estado}` : '';
+            document.getElementById('chatMensajes').innerHTML = '<p class="chat-vacio">Cargando conversación...</p>';
+
+            try {
+                const historial = await peticion(`/api/mensajes/ticket/${idTicket}`);
+                chatUltimoId = historial.length > 0 ? historial[historial.length - 1].id_mensaje : 0;
+                pintarMensajes(historial);
+                await peticion(`/api/mensajes/ticket/${idTicket}/leidos`, 'PATCH');
+                iniciarPollingChat();
+            } catch (error) {
+                document.getElementById('chatMensajes').innerHTML = '<p class="chat-vacio">No se pudo cargar la conversación.</p>';
+                console.error('Error abriendo chat:', error);
+            }
+        }
+
+        function cerrarModalChat() {
+            document.getElementById('modalChat').classList.add('hidden');
+            detenerPollingChat();
+            chatTicketActivo = null;
+        }
+
+        function iniciarPollingChat() {
+            chatPolling = setInterval(async () => {
+                if (!chatTicketActivo) return;
+                try {
+                    const nuevos = await peticion(`/api/mensajes/nuevos/${chatTicketActivo}/${chatUltimoId}`);
+                    if (nuevos.length > 0) {
+                        agregarMensajes(nuevos);
+                        await peticion(`/api/mensajes/ticket/${chatTicketActivo}/leidos`, 'PATCH');
+                    }
+                } catch (error) {
+                    console.error('Error en polling:', error);
+                }
+            }, 4000);
+        }
+
+        function detenerPollingChat() {
+            if (chatPolling) { clearInterval(chatPolling); chatPolling = null; }
+        }
+
+        document.getElementById('chatFormulario').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('chatInput');
+            const texto = input.value.trim();
+            if (!texto || !chatTicketActivo) return;
+
+            input.value = '';
+            try {
+                const mensajeCreado = await peticion('/api/mensajes', 'POST', { id_ticket: chatTicketActivo, contenido: texto });
+                agregarMensajes([mensajeCreado]);
+            } catch (error) {
+                alert(error.message || 'No se pudo enviar el mensaje');
+                input.value = texto;
+            }
+        });
+
+        document.getElementById('modalChat').addEventListener('click', function(e) {
+            if (e.target === this) cerrarModalChat();
+        });
+
+        async function marcarResueltoDesdeChat() {
+            if (!chatTicketActivo) return;
+            try {
+                await peticion(`/api/tickets/${chatTicketActivo}/cerrar`, 'PATCH');
+                await peticion('/api/historial', 'POST', { id_ticket: chatTicketActivo, accion: 'Ticket marcado como resuelto', campo_modificado: 'estado', valor_anterior: '', valor_nuevo: 'Cerrado' });
+                document.getElementById('chatEstadoTicket').textContent = 'Estado: Cerrado';
+                cargarTickets();
+                alert('Ticket marcado como resuelto.');
+            } catch (error) {
+                alert(error.message || 'No se pudo resolver el ticket');
+            }
+        }
+
+        async function cerrarTicketDesdeChat() {
+            if (!chatTicketActivo) return;
+            if (!confirm('¿Seguro que deseas cerrar este ticket?')) return;
+            try {
+                await peticion(`/api/tickets/${chatTicketActivo}/cerrar`, 'PATCH');
+                await peticion('/api/historial', 'POST', { id_ticket: chatTicketActivo, accion: 'Ticket cerrado por el agente', campo_modificado: 'estado', valor_anterior: '', valor_nuevo: 'Cerrado' });
+                document.getElementById('chatEstadoTicket').textContent = 'Estado: Cerrado';
+                cargarTickets();
+                alert('Ticket cerrado.');
+            } catch (error) {
+                alert(error.message || 'No se pudo cerrar el ticket');
+            }
+        }
     </script>
 </body>
 </html>
