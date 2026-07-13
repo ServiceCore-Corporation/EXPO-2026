@@ -93,7 +93,7 @@ function formatoNumero($valor) {
             <a href="dashboard_admin.php" class="menu-item">
                 <span class="material-symbols-outlined">dashboard</span>Inicio
             </a>
-            <a href="gestion_empresas.php" class="menu-item">
+            <a href="gestion_empresas.php" class="menu-item ">
                 <span class="material-symbols-outlined">business</span> Gestion de Empresas
             </a>
             <a href="gestion_carrusel.php" class="menu-item">
@@ -108,18 +108,20 @@ function formatoNumero($valor) {
             <a href="gestion_pagos.php" class="menu-item">
                 <span class="material-symbols-outlined">payments</span>Pagos
             </a>
-            <a href="#" class="menu-item">
+            <a href="reportes.php" class="menu-item">
                 <span class="material-symbols-outlined">insights</span>Reportes
+            </a>
+            <a href="../historial.php" class="menu-item">
+                <span class="material-symbols-outlined">history</span>Historial y Auditoría
             </a>
         </nav>
 
-        <div class="flex-grow"></div>
+        <br><br>
         <!-- Cerrar sesión -->
         <a href="../../logout.php"class="mt-auto flex items-center justify-center gap-3 w-full py-3 rounded-xl border-2 border-red-500 text-red-400 font-semibold transition-all duration-300 hover:bg-red-500 hover:text-white hover:shadow-lg">
             <span class="material-symbols-outlined">logout</span>
             Cerrar Sesión
         </a>
-
     </aside>
 
     <main class="contenido ml-64 pt-24 px-8 pb-10">

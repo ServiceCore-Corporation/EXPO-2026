@@ -82,55 +82,84 @@ while ($row = $resU->fetch_assoc()) $usuarios[] = $row;
 </head>
 <body>
 
+    <!-- ENCABEZADO -->
     <header class="fixed top-0 left-64 right-0 h-16 bg-white shadow flex items-center justify-between px-8 z-50">
         <div class="flex items-center gap-4">
             <span class="material-symbols-outlined text-[#5750ad]">menu</span>
-            <h1 class="text-xl font-bold text-[#1e1858]">Historial y Auditoría</h1>
+            <h1 class="text-xl font-bold text-[#1e1858]">Panel Administrador</h1>
         </div>
         <div class="relative flex items-center gap-4">
             <span class="material-symbols-outlined cursor-pointer">notifications</span>
             <div class="text-right">
-                <p class="font-bold"><?= htmlspecialchars($nombreUsuario) ?></p>
-                <p class="text-sm text-gray-500">Historial</p>
+                <p class="font-bold"><?= $nombreUsuario ?></p>
+                <p class="text-sm text-gray-500">Administrador</p>
             </div>
-            <div class="flex items-center gap-3">
-                <a href="<?= htmlspecialchars($dashboardRuta) ?>" class="text-sm text-[#5750ad] hover:underline">Dashboard</a>
-                <a href="perfil.php" class="text-sm text-gray-600 hover:underline">Perfil</a>
-                <a href="../logout.php" class="text-sm text-red-500 hover:text-red-700">Cerrar sesión</a>
+            <div id="botonUsuario" class="w-10 h-10 rounded-full cursor-pointer border-2 border-[#5750ad] bg-[#5750ad] flex items-center justify-center text-white font-bold">
+                <?= mb_strtoupper(mb_substr($_SESSION['nombre'], 0, 1)) ?>
             </div>
-            <div class="w-10 h-10 rounded-full border-2 border-[#5750ad] bg-[#5750ad] flex items-center justify-center text-white font-bold">
-                <?= mb_strtoupper(mb_substr($nombreUsuario, 0, 1)) ?>
+            <div id="menuUsuario" class="hidden absolute right-0 top-14 w-52 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
+                    <span class="material-symbols-outlined text-gray-600">settings</span>Configuración
+                </a>
+                <a href="perfil.php" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
+                    <span class="material-symbols-outlined text-gray-600">person</span>Perfil
+                </a>
+                <a href="../../logout.php" class="flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition">
+                    <span class="material-symbols-outlined">logout</span>Cerrar Sesión
+                </a>
             </div>
         </div>
     </header>
 
+    <!-- MENÚ LATERAL -->
     <aside class="fixed left-0 top-0 w-64 h-screen bg-[#1e1858] text-white p-6 flex flex-col">
         <div class="flex flex-col items-center mb-8">
+            <img src="../img/logoSC.png" alt="Logo" class="w-20 h-20 object-contain mb-4">
             <h6 class="text-lg font-bold text-center leading-6">ServiceCore<br>Corporation</h6>
         </div>
         <nav class="flex flex-col flex-1 gap-2">
-            <a href="<?= htmlspecialchars($dashboardRuta) ?>" class="menu-item">
+            <a href="Admin/dashboard_admin.php" class="menu-item">
                 <span class="material-symbols-outlined">dashboard</span>Inicio
             </a>
-            <a href="perfil.php" class="menu-item">
-                <span class="material-symbols-outlined">person</span>Perfil
+            <a href="Admin/gestion_empresas.php" class="menu-item ">
+                <span class="material-symbols-outlined">business</span> Gestion de Empresas
+            </a>
+            <a href="Admin/gestion_carrusel.php" class="menu-item">
+                <span class="material-symbols-outlined">view_carousel</span>Gestión de Carrusel
+            </a>
+            <a href="Admin/gestion_galeria.php" class="menu-item">
+                <span class="material-symbols-outlined">photo_library</span>Gestión de Galería
+            </a>
+            <a href="Admin/gestion_planes.php" class="menu-item">
+                <span class="material-symbols-outlined">workspace_premium</span>Planes
+            </a>
+            <a href="Admin/gestion_pagos.php" class="menu-item">
+                <span class="material-symbols-outlined">payments</span>Pagos
+            </a>
+            <a href="Admin/reportes.php" class="menu-item">
+                <span class="material-symbols-outlined">insights</span>Reportes
             </a>
             <a href="historial.php" class="menu-item activo">
                 <span class="material-symbols-outlined">history</span>Historial y Auditoría
             </a>
-            <a href="../logout.php" class="menu-item text-red-400">
-                <span class="material-symbols-outlined">logout</span>Cerrar Sesión
-            </a>
         </nav>
+
+        <br><br>
+        <!-- Cerrar sesión -->
+        <a href="../logout.php"class="mt-auto flex items-center justify-center gap-3 w-full py-3 rounded-xl border-2 border-red-500 text-red-400 font-semibold transition-all duration-300 hover:bg-red-500 hover:text-white hover:shadow-lg">
+            <span class="material-symbols-outlined">logout</span>
+            Cerrar Sesión
+        </a>
     </aside>
 
-    <main class="contenido ml-64 pt-16 p-8">
+    <main class="contenido ml-64 pt-24 px-8 pb-10">
 
         <div class="page-header">
-            <div>
-                <div class="page-title">Registro de Historial y Auditoría</div>
-                <div class="page-subtitle">Consulta los cambios registrados sobre los tickets: quién los hizo, qué campo cambió y cuándo.</div>
-            </div>
+            <section class="mb-8">
+                <h2 class="text-4xl font-bold text-[#1e1858]">Registro de Historial y Auditoría</h2>
+                <p class="text-gray-500 mt-2">Consulta los cambios registrados sobre los tickets: quién los hizo, qué campo cambió y cuándo.</p>
+            </section>
+    
             <button id="btnExportar" class="btn-primary-sc">
                 <span class="material-symbols-outlined">download</span>
                 Exportar CSV
@@ -240,6 +269,9 @@ while ($row = $resU->fetch_assoc()) $usuarios[] = $row;
             </div>
         </div>
     </main>
+    <footer class="text-center text-gray-500 text-sm border-t mt-10 p-4 bg-white rounded-xl">
+            <p>© 2026 ServiceCore Corporation</p>
+    </footer>
 
     <script>
     document.getElementById('btnExportar')?.addEventListener('click', () => {
@@ -256,5 +288,6 @@ while ($row = $resU->fetch_assoc()) $usuarios[] = $row;
         enlace.click();
     });
     </script>
+    <script src="../js/dashboard_admin.js"></script>
 </body>
 </html>

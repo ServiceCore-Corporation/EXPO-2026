@@ -58,28 +58,32 @@ $nombreUsuario = $_SESSION['nombre'] ?? 'Administrador';
             <a href="dashboard_admin.php" class="menu-item">
                 <span class="material-symbols-outlined">dashboard</span>Inicio
             </a>
-            <a href="gestion_empresas.php" class="menu-item">
+            <a href="gestion_empresas.php" class="menu-item ">
                 <span class="material-symbols-outlined">business</span> Gestion de Empresas
             </a>
-            <a href="carrusel.php" class="menu-item">
+            <a href="gestion_carrusel.php" class="menu-item">
                 <span class="material-symbols-outlined">view_carousel</span>Gestión de Carrusel
             </a>
-            <a href="galeria.php" class="menu-item">
+            <a href="gestion_galeria.php" class="menu-item">
                 <span class="material-symbols-outlined">photo_library</span>Gestión de Galería
             </a>
-            <a href="#" class="menu-item">
+            <a href="gestion_planes.php" class="menu-item">
                 <span class="material-symbols-outlined">workspace_premium</span>Planes
             </a>
-            <a href="#" class="menu-item">
+            <a href="gestion_pagos.php" class="menu-item">
                 <span class="material-symbols-outlined">payments</span>Pagos
             </a>
             <a href="reportes.php" class="menu-item activo">
                 <span class="material-symbols-outlined">insights</span>Reportes
             </a>
+            <a href="../historial.php" class="menu-item">
+                <span class="material-symbols-outlined">history</span>Historial y Auditoría
+            </a>
         </nav>
 
-        <div class="flex-grow"></div>
-        <a href="../../logout.php" class="mt-auto flex items-center justify-center gap-3 w-full py-3 rounded-xl border-2 border-red-500 text-red-400 font-semibold transition-all duration-300 hover:bg-red-500 hover:text-white hover:shadow-lg">
+        <br><br>
+        <!-- Cerrar sesión -->
+        <a href="../../logout.php"class="mt-auto flex items-center justify-center gap-3 w-full py-3 rounded-xl border-2 border-red-500 text-red-400 font-semibold transition-all duration-300 hover:bg-red-500 hover:text-white hover:shadow-lg">
             <span class="material-symbols-outlined">logout</span>
             Cerrar Sesión
         </a>
@@ -91,10 +95,10 @@ $nombreUsuario = $_SESSION['nombre'] ?? 'Administrador';
 
             <!-- Encabezado de página + botón de descarga -->
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
-                <div>
-                    <h2 class="text-2xl font-bold text-[#1e1858]">Reportes de Mesa de Servicio</h2>
-                    <p class="text-gray-500 text-sm mt-1">Métricas, gráficas y resumen de tickets del periodo seleccionado.</p>
-                </div>
+                <section class="mb-8">
+                    <h2 class="text-4xl font-bold text-[#1e1858]">Reportes de Mesa de Servicio</h2>
+                    <p class="text-gray-500 mt-2">Métricas, gráficas y resumen de tickets del periodo seleccionado.</p>
+                </section>
                 <button id="btnDescargarPDF" class="flex items-center gap-2 bg-[#5750ad] hover:bg-[#1e1858] text-white font-semibold px-5 py-3 rounded-xl transition shadow">
                     <span class="material-symbols-outlined">picture_as_pdf</span>
                     Descargar PDF
@@ -194,6 +198,9 @@ $nombreUsuario = $_SESSION['nombre'] ?? 'Administrador';
 
         </div>
     </main>
+    <footer class="text-center text-gray-500 text-sm border-t mt-10 p-4 bg-white rounded-xl">
+        <p>© 2026 ServiceCore Corporation</p>
+    </footer>
 
     <script src="../../js/admin_reportes.js"></script>
 </body>

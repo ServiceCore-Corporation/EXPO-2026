@@ -1,9 +1,9 @@
 <?php
 
 $servername = "localhost";
-$username = "u936997481_ServiCore";
-$password = "ServiceCore_2026";
-$database = "u936997481_ServiceCore";
+$username = "root";
+$password = "";
+$database = "servicecore";
 
 $conn = new mysqli($servername, $username, $password, $database);
 

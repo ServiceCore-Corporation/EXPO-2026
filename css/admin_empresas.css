@@ -82,6 +82,37 @@ body {
         color: white;
 }
 
+/*scroll*/
+aside nav {
+  overflow-y: auto;
+  padding-right: 8px;
+  gap: 4px !important;
+  max-height: calc(100vh - 140px);
+}
+
+aside > div:first-child {
+  margin-bottom: 30px;
+}
+
+aside nav::-webkit-scrollbar {
+  width: 6px;
+}
+
+aside nav::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+aside nav::-webkit-scrollbar-thumb {
+  background: rgba(199, 201, 255, 0.4);
+  border-radius: 10px;
+  transition: background 0.3s;
+}
+
+aside nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(199, 201, 255, 0.7);
+}
+
 
 .small-title {
     margin: 0;

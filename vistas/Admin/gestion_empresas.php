@@ -86,30 +86,32 @@ function inicialesAE($nombre) {
             <a href="gestion_empresas.php" class="menu-item activo">
                 <span class="material-symbols-outlined">business</span> Gestion de Empresas
             </a>
-            <a href="carrusel.php" class="menu-item">
+            <a href="gestion_carrusel.php" class="menu-item">
                 <span class="material-symbols-outlined">view_carousel</span>Gestión de Carrusel
             </a>
-            <a href="galeria.php" class="menu-item">
+            <a href="gestion_galeria.php" class="menu-item">
                 <span class="material-symbols-outlined">photo_library</span>Gestión de Galería
             </a>
             <a href="gestion_planes.php" class="menu-item">
                 <span class="material-symbols-outlined">workspace_premium</span>Planes
             </a>
-            <a href="#" class="menu-item">
+            <a href="gestion_pagos.php" class="menu-item">
                 <span class="material-symbols-outlined">payments</span>Pagos
             </a>
             <a href="reportes.php" class="menu-item">
                 <span class="material-symbols-outlined">insights</span>Reportes
             </a>
+            <a href="../historial.php" class="menu-item">
+                <span class="material-symbols-outlined">history</span>Historial y Auditoría
+            </a>
         </nav>
 
-        <div class="flex-grow"></div>
+        <br><br>
         <!-- Cerrar sesión -->
         <a href="../../logout.php"class="mt-auto flex items-center justify-center gap-3 w-full py-3 rounded-xl border-2 border-red-500 text-red-400 font-semibold transition-all duration-300 hover:bg-red-500 hover:text-white hover:shadow-lg">
             <span class="material-symbols-outlined">logout</span>
             Cerrar Sesión
         </a>
-
     </aside>
 
     <main class="contenido ml-64 pt-24 px-8 pb-10">
