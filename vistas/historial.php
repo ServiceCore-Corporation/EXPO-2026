@@ -15,7 +15,7 @@ function obtenerRutaDashboard($rol)
         case 3:
             return 'Agente/dashboard_agente.php';
         case 4:
-            return 'Supervisor/dashboard_supervisor.php';
+            return 'Supervisor/dashboard_aprovador.php';
         case 5:
             return 'Cliente/dashboard_cliente.php';
         default:
@@ -106,7 +106,6 @@ while ($row = $resU->fetch_assoc()) $usuarios[] = $row;
 
     <aside class="fixed left-0 top-0 w-64 h-screen bg-[#1e1858] text-white p-6 flex flex-col">
         <div class="flex flex-col items-center mb-8">
-            <img src="../../img/logoSC.png" alt="Logo" class="w-20 h-20 object-contain mb-4">
             <h6 class="text-lg font-bold text-center leading-6">ServiceCore<br>Corporation</h6>
         </div>
         <nav class="flex flex-col flex-1 gap-2">

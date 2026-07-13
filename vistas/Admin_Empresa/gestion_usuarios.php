@@ -116,7 +116,7 @@ function inicialesRoles($nombre) {
             <a href="asignar_categoria.php" class="menu-item">
                 <span class="material-symbols-outlined">sell</span>Asignar Categoría
             </a>
-            <a href="../historial.php" class="menu-item">
+            <a href="#" class="menu-item">
                 <span class="material-symbols-outlined">history</span>Historial
             </a>
             

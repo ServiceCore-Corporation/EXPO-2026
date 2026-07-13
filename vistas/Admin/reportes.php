@@ -61,20 +61,17 @@ $nombreUsuario = $_SESSION['nombre'] ?? 'Administrador';
             <a href="gestion_empresas.php" class="menu-item">
                 <span class="material-symbols-outlined">business</span> Gestion de Empresas
             </a>
-            <a href="gestion_carrusel.php" class="menu-item">
+            <a href="carrusel.php" class="menu-item">
                 <span class="material-symbols-outlined">view_carousel</span>Gestión de Carrusel
             </a>
-            <a href="gestion_galeria.php" class="menu-item">
+            <a href="galeria.php" class="menu-item">
                 <span class="material-symbols-outlined">photo_library</span>Gestión de Galería
             </a>
-            <a href="gestion_planes.php" class="menu-item">
+            <a href="#" class="menu-item">
                 <span class="material-symbols-outlined">workspace_premium</span>Planes
             </a>
-            <a href="gestion_pagos.php" class="menu-item">
+            <a href="#" class="menu-item">
                 <span class="material-symbols-outlined">payments</span>Pagos
-            </a>
-            <a href="../historial.php" class="menu-item">
-                <span class="material-symbols-outlined">history</span>Historial y Auditoría
             </a>
             <a href="reportes.php" class="menu-item activo">
                 <span class="material-symbols-outlined">insights</span>Reportes

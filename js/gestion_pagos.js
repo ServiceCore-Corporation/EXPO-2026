@@ -26,54 +26,6 @@
     let pagosCache = [];
     let estadoActivoFiltro = '';
 
-    const ESTADOS_PAGO = {
-        1: { texto: 'Pagado', clase: 'badge-green' },
-        0: { texto: 'Pendiente', clase: 'badge-yellow' },
-        2: { texto: 'Rechazado', clase: 'badge-red' }
-    };
-
-    // Esta vista necesita su propia función de renderizado (columnas Empresa/Monto/
-    // Método/Fecha/Estado/Acciones, clase .pago-row y data-estado en cada fila,
-    // botones editar-pago/eliminar-pago) porque planes_pagos.js define una función
-    // global con el mismo nombre pero con una estructura de tabla distinta
-    // (sin columna Estado, sin acción de editar). Al declararla aquí, dentro del
-    // IIFE, esta versión toma prioridad sobre la global para esta página.
-    function renderizarTablaPagos(lista, idTbody) {
-        const cuerpo = document.getElementById(idTbody);
-        if (!cuerpo) return;
-
-        if (lista.length === 0) {
-            cuerpo.innerHTML = '<tr><td colspan="6" class="sin-datos">No hay pagos registrados.</td></tr>';
-            return;
-        }
-
-        cuerpo.innerHTML = lista.map((pago) => {
-            const estado = parseInt(pago.estado);
-            const info = ESTADOS_PAGO[estado] || { texto: 'Desconocido', clase: 'badge-gray' };
-            const fecha = (pago.fecha_pago || '').slice(0, 10).split('-').reverse().join('/');
-
-            return `
-                <tr class="pago-row" data-estado="${estado}">
-                    <td><strong>${pago.empresa || '—'}</strong></td>
-                    <td>Q${parseFloat(pago.monto).toFixed(2)}</td>
-                    <td>${pago.metodo_pago || '—'}</td>
-                    <td>${fecha}</td>
-                    <td><span class="badge ${info.clase}">${info.texto}</span></td>
-                    <td class="th-actions">
-                        <div class="row-actions">
-                            <button class="row-icon-btn" data-action="editar-pago" data-id="${pago.id_pago}" title="Editar pago">
-                                <span class="material-symbols-outlined">edit</span>
-                            </button>
-                            <button class="row-icon-btn" data-action="eliminar-pago" data-id="${pago.id_pago}" title="Eliminar pago">
-                                <span class="material-symbols-outlined">delete</span>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        }).join('');
-    }
-
     
     function actualizarKpis(lista) {
         const total = lista

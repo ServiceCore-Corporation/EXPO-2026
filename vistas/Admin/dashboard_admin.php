@@ -69,11 +69,8 @@ $correoUsuario = htmlspecialchars($_SESSION['correo']);
             <a href="gestion_planes.php" class="menu-item">
                 <span class="material-symbols-outlined">workspace_premium</span>Planes
             </a>
-            <a href="gestion_pagos.php" class="menu-item">
+            <a href="#" class="menu-item">
                 <span class="material-symbols-outlined">payments</span>Pagos
-            </a>
-            <a href="../historial.php" class="menu-item">
-                <span class="material-symbols-outlined">history</span>Historial y Auditoría
             </a>
             <a href="reportes.php" class="menu-item">
                 <span class="material-symbols-outlined">insights</span>Reportes

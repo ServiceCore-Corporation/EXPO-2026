@@ -73,7 +73,7 @@ function formatoNumero($valor) {
                 <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
                     <span class="material-symbols-outlined text-gray-600">settings</span>Configuración
                 </a>
-                <a href="perfil.php" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
+                <a href="../perfil.php" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
                     <span class="material-symbols-outlined text-gray-600">person</span>Perfil
                 </a>
                 <a href="../../logout.php" class="flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition">
@@ -108,10 +108,7 @@ function formatoNumero($valor) {
             <a href="gestion_pagos.php" class="menu-item">
                 <span class="material-symbols-outlined">payments</span>Pagos
             </a>
-            <a href="../historial.php" class="menu-item">
-                <span class="material-symbols-outlined">history</span>Historial y Auditoría
-            </a>
-            <a href="reportes.php" class="menu-item">
+            <a href="#" class="menu-item">
                 <span class="material-symbols-outlined">insights</span>Reportes
             </a>
         </nav>

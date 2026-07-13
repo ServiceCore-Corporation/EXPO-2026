@@ -10,8 +10,8 @@ if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
     switch ((int)$_SESSION['id_rol']) {
         case 1: header("Location: vistas/Admin/dashboard_admin.php"); break;
         case 2: header("Location: vistas/Admin_Empresa/dashboard_admin_emp.php"); break;
-        case 3: header("Location: vistas/Agente/dashboard_agente.php"); break;
-        case 4: header("Location: vistas/Supervisor/dashboard_supervisor.php"); break;
+        case 3: header(" Location: vistas/Agente/dashboard_agente.php"); break;
+        case 4: header("Location: vistas/Supervisor/dashboard_aprovador.php"); break;
         case 5: header("Location: vistas/Cliente/dashboard_cliente.php"); break;
         default:
             session_destroy();
@@ -57,7 +57,6 @@ if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
       <li><a href="#features">Funciones</a></li>
       <li><a href="#planes">Precios</a></li>
       <li><a href="about.html">Sobre Nosotros</a></li>
-      <li><a href="#">Sobre Nosotros</a></li>
     </ul>
     <a href="login.php" class="nav-cta">Iniciar sesión</a>
   </nav>

@@ -2,8 +2,12 @@
 define('ROL_REQUERIDO', 4);
 require_once '../../seguridad.php';
 require_once '../../conexion.php';
-$nombreUsuario = htmlspecialchars($_SESSION['nombre']);
-$idUsuario     = (int)$_SESSION['usuario_id'];
+
+$supervisor = [
+    'id'     => (int)$_SESSION['usuario_id'],
+    'nombre' => $_SESSION['nombre'] ?? 'Supervisor',
+    'rol'    => 'Supervisor',
+];
 
 // Categorías reales de la base de datos (catálogo compartido por toda la empresa)
 $categoriasCatalogo = [];
@@ -119,25 +123,60 @@ function inicialesSup($nombre) {
     <link rel="stylesheet" href="../../css/override.css">
 </head>
 <body>
-    <!-- ENCABEZADO -->
+
+    <aside class="fixed left-0 top-0 w-64 h-screen bg-[#1e1858] text-white p-6 flex flex-col">
+        <div class="flex flex-col items-center mb-8">
+            <img src="../../img/logoSC.png" alt="Logo" class="w-20 h-20 object-contain mb-4">
+            <h6 class="text-lg font-bold text-center leading-6">ServiceCore<br>Corporation</h6>
+        </div>
+        <nav class="flex flex-col flex-1 gap-2">
+            <a href="dashboard_aprovador.php" class="menu-item">
+                <span class="material-symbols-outlined">dashboard</span>Inicio
+            </a>
+
+            <a href="asignacion_tickets.php" class="menu-item activo">
+                <span class="material-symbols-outlined">assignment_ind</span>Asignación de Tickets
+            </a>
+
+            <a href="#" class="menu-item">
+                <span class="material-symbols-outlined">group</span>Mis agentes
+            </a>
+
+            <a href="dashboard_aprovador.php" class="menu-item">
+                <span class="material-symbols-outlined">insights</span>Estadísticas
+            </a>
+        </nav>
+        <div class="flex-grow"></div>
+        <a href="../../logout.php" class="mt-auto flex items-center justify-center gap-3 w-full py-3 rounded-xl border-2 border-red-500 text-red-400 font-semibold transition-all duration-300 hover:bg-red-500 hover:text-white hover:shadow-lg">
+            <span class="material-symbols-outlined">logout</span>
+            Cerrar Sesión
+        </a>
+    </aside>
+
     <header class="fixed top-0 left-64 right-0 h-16 bg-white shadow flex items-center justify-between px-8 z-50">
         <div class="flex items-center gap-4">
             <span class="material-symbols-outlined text-[#5750ad]">menu</span>
-            <h1 class="text-xl font-bold text-[#1e1858]">Panel Supervisor</h1>
+            <div>
+                <p class="text-sm text-gray-500">Panel del supervisor</p>
+                <h1 class="text-xl font-bold text-[#1e1858]">Asignación de Tickets</h1>
+            </div>
         </div>
         <div class="relative flex items-center gap-4">
-            <span class="material-symbols-outlined cursor-pointer">notifications</span>
-            <div class="text-right">
-                <p class="font-bold"><?= $nombreUsuario ?></p>
-                <p class="text-sm text-gray-500">Supervisor</p>
+            <div class="hidden md:flex items-center gap-4">
+                <div class="search-box">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="search" id="buscadorTickets" placeholder="Buscar por ID, asunto o cliente...">
+                </div>
+                <span class="material-symbols-outlined cursor-pointer">notifications</span>
+                <div class="text-right">
+                    <p class="font-bold"><?= htmlspecialchars($supervisor['nombre']) ?></p>
+                    <p class="text-sm text-gray-500"><?= htmlspecialchars($supervisor['rol']) ?></p>
+                </div>
             </div>
             <div id="botonUsuario" class="w-10 h-10 rounded-full cursor-pointer border-2 border-[#5750ad] bg-[#5750ad] flex items-center justify-center text-white font-bold">
-                <?= mb_strtoupper(mb_substr($_SESSION['nombre'], 0, 1)) ?>
+                <?= htmlspecialchars(inicialesSup($supervisor['nombre'])) ?>
             </div>
             <div id="menuUsuario" class="hidden absolute right-0 top-14 w-52 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50">
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
-                    <span class="material-symbols-outlined text-gray-600">settings</span>Configuración
-                </a>
                 <a href="perfil.php" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
                     <span class="material-symbols-outlined text-gray-600">person</span>Perfil
                 </a>
@@ -148,35 +187,16 @@ function inicialesSup($nombre) {
         </div>
     </header>
 
-    <!-- MENÚ LATERAL -->
-    <aside class="fixed left-0 top-0 w-64 h-full bg-[#1e1858] text-white p-6">
-        <div class="flex flex-col items-center mb-8">
-            <img src="../../img/logoSC.png" alt="Logo" class="w-20 h-20 object-contain mb-4">
-            <h6 class="text-lg font-bold text-center leading-6">ServiceCore<br>Corporation</h6>
-        </div>
-        <nav class="space-y-2">
-            <a href="dashboard_supervisor.php" class="menu-item">
-                <span class="material-symbols-outlined">dashboard</span>Inicio
-            </a>
-            <a href="asignacion_tickets.php" class="menu-item activo">
-                <span class="material-symbols-outlined">assignment_ind</span>Asignación de Tickets
-            </a>
-            <a href="#" class="menu-item" title="Próximamente">
-                <span class="material-symbols-outlined">group</span>Mis Agentes
-            </a>
-            <a href="#" class="menu-item" title="Próximamente">
-                <span class="material-symbols-outlined">category</span>Mis Categorías
-            </a>
-            <a href="../historial.php" class="menu-item">
-                <span class="material-symbols-outlined">history</span>Historial
-            </a>
-        </nav>
-    </aside>
+    <main class="content px-8 pb-10">
 
-    <main class="contenido ml-64 pt-24 px-8 pb-10">
-        <section class="mb-8">
-            <h2 class="text-4xl font-bold text-[#1e1858]">Asignación de Tickets</h2>
-            <p class="text-gray-500 mt-2">Asigna tickets a tus agentes dentro de las categorías que tienes bajo tu responsabilidad.</p>
+        <section class="page-head">
+            <nav class="breadcrumb" aria-label="Ubicación actual">
+                <a href="#">Panel</a>
+                <span class="material-symbols-outlined">chevron_right</span>
+                <span>Asignación de Tickets</span>
+            </nav>
+            <h1>Asignación de Tickets</h1>
+            <p>Asigna tickets a tus agentes dentro de las categorías que tienes bajo tu responsabilidad.</p>
         </section>
 
         <!-- Aviso de alcance -->
@@ -354,10 +374,11 @@ function inicialesSup($nombre) {
                 <p class="empty-state" id="emptyState" style="display:none;">No se encontraron tickets con esos filtros.</p>
             </div>
         </article>
+
+        <footer class="text-center text-gray-500 text-sm border-t mt-10 p-4 bg-white rounded-xl">
+            <p>© 2026 ServiceCore Corporation</p>
+        </footer>
     </main>
-    <footer class="text-center text-gray-500 text-sm border-t mt-10 p-4 bg-white rounded-xl">
-        <p>© 2026 ServiceCore Corporation — Asignación de Tickets, acceso restringido por categoría.</p>
-    </footer>
 
     <script>
         const botonUsuario = document.getElementById('botonUsuario');
@@ -429,7 +450,9 @@ function inicialesSup($nombre) {
     </div>
 
     <div class="toast-container" id="toastContainer"></div>
-    
+    <footer class="text-center text-gray-500 text-sm border-t mt-10 p-4 bg-white rounded-xl">
+        <p>© 2026 ServiceCore Corporation — Asignación de Tickets, acceso restringido por categoría.</p>
+    </footer>
 
     <!-- Datos de agentes disponibles para el front-end (ya pre-filtrados a las categorías del supervisor) -->
     <script>
@@ -446,6 +469,5 @@ function inicialesSup($nombre) {
     </script>
     <script src="../../js/api.js"></script>
     <script src="../../js/asignacion.js"></script>
-    <script src="../../js/dashboard_supervisor.js"></script>
 </body>
 </html>

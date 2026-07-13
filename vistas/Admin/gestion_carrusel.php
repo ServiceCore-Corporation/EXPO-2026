@@ -165,6 +165,8 @@ if (isset($_GET['ajax'])) {
             <a href="gestion_pagos.php" class="menu-item">
                 <span class="material-symbols-outlined">payments</span>Pagos
             </a>
+            <a href="#" class="menu-item">
+                <span class="material-symbols-outlined">insights</span>Reportes
             <a href="../historial.php" class="menu-item">
                 <span class="material-symbols-outlined">history</span>Historial y Auditoría
             </a>

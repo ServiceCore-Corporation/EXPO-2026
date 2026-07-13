@@ -57,10 +57,10 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
             <a href="dashboard_agente.php" class="menu-item activo">
                 <span class="material-symbols-outlined">dashboard</span>Inicio
             </a>
-            <a href="dashboard_agente.php" class="menu-item">
+            <a href="chat_agente.php" class="menu-item">
                 <span class="material-symbols-outlined">confirmation_number</span>Tickets
             </a>
-            <a href="../historial.php" class="menu-item">
+            <a href="#" class="menu-item">
                 <span class="material-symbols-outlined">history</span>Historial
             </a>
             <a href="#" class="menu-item">
