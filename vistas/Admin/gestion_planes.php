@@ -327,6 +327,7 @@ function formatoNumero($valor) {
 
     <div class="toast-container" id="toastContainer"></div>
 
+    <script src="../../js/api.js"></script>
     <script src="../../js/planes_pagos.js"></script>
     <script src="../../js/gestion_planes.js"></script>
     <script src="../../js/dashboard_admin.js"></script>

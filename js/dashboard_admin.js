@@ -1,10 +1,12 @@
 const botonUsuario = document.getElementById("botonUsuario");
 const menuUsuario  = document.getElementById("menuUsuario");
-botonUsuario.addEventListener("click", () => menuUsuario.classList.toggle("hidden"));
-document.addEventListener("click", (e) => {
-    if (!botonUsuario.contains(e.target) && !menuUsuario.contains(e.target))
-        menuUsuario.classList.add("hidden");
-});
+if (botonUsuario && menuUsuario) {
+    botonUsuario.addEventListener("click", () => menuUsuario.classList.toggle("hidden"));
+    document.addEventListener("click", (e) => {
+        if (!botonUsuario.contains(e.target) && !menuUsuario.contains(e.target))
+            menuUsuario.classList.add("hidden");
+    });
+}
 
 const tarjetas = document.querySelectorAll(".animar");
 tarjetas.forEach(t => {
@@ -34,6 +36,9 @@ function colorPrioridad(prioridad) {
 }
 
 async function cargarDashboard() {
+    // Este bloque solo aplica en dashboard_admin.php, que es la única
+    // vista con estas tarjetas de resumen.
+    if (!document.getElementById('stat-tickets')) return;
     try {
         const res  = await fetch('/api/dashboard');
         const data = await res.json();
@@ -56,10 +61,13 @@ async function cargarDashboard() {
 }
 
 async function cargarTickets() {
+    // Este bloque solo aplica en dashboard_admin.php, que es la única
+    // vista con esta tabla de tickets recientes.
+    const tbody = document.getElementById('tabla-tickets');
+    if (!tbody) return;
     try {
         const res     = await fetch('/api/dashboard/tickets');
         const data    = await res.json();
-        const tbody   = document.getElementById('tabla-tickets');
 
         if (!data.recientes || data.recientes.length === 0) {
             tbody.innerHTML = '<tr><td colspan="4" class="p-5 text-center text-gray-400">Sin tickets</td></tr>';

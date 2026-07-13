@@ -172,13 +172,6 @@ if (isset($_GET['ajax'])) {
                 <span class="material-symbols-outlined">history</span>Historial y Auditoría
             </a>
         </nav>
-
-        <br><br>
-        <!-- Cerrar sesión -->
-        <a href="../../logout.php"class="mt-auto flex items-center justify-center gap-3 w-full py-3 rounded-xl border-2 border-red-500 text-red-400 font-semibold transition-all duration-300 hover:bg-red-500 hover:text-white hover:shadow-lg">
-            <span class="material-symbols-outlined">logout</span>
-            Cerrar Sesión
-        </a>
     </aside>
 
     <main class="contenido ml-64 pt-24 px-8 pb-10">
@@ -255,7 +248,7 @@ if (isset($_GET['ajax'])) {
     </footer>
 
     <script>
-    const URL_AJAX = 'carrusel.php?ajax=1';
+    const URL_AJAX = 'gestion_carrusel.php?ajax=1';
 
     const tabla = document.getElementById('tablaCarrusel');
     const modal = document.getElementById('modalCarrusel');
