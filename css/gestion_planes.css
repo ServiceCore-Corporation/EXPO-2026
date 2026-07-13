@@ -1,0 +1,40 @@
+@import url("admin_empresas.css");
+
+.plan-nombre {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--gray-900);
+}
+
+.plan-nombre .material-symbols-outlined {
+    font-size: 18px;
+    color: var(--purple);
+}
+
+.plan-row {
+    transition: background .15s ease, opacity .15s ease;
+}
+
+.plan-row:hover {
+    background: #fafafe;
+}
+
+.plan-row:last-child td {
+    border-bottom: 0;
+}
+
+.plan-row.row-hidden {
+    display: none;
+}
+
+.plan-row[data-estado="Inactivo"] {
+    opacity: .7;
+}
+
+@media (max-width: 860px) {
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+}

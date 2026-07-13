@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="#">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<title>Sobre Nosotros</title>
+
+<style>
+ 
+    #about{
+        --indigo-950:#1e1b4b;
+        --indigo-600:#4f46e5;
+        --indigo-500:#6366f1;
+        --violet-500:#8b5cf6;
+        --violet-400:#a78bfa;
+        --blue-500:#3b82f6;
+        --pink-500:#ec4899;
+        --amber-500:#f59e0b;
+        --ink-0:#1e1b4b;
+        --ink-1:#5b5580;
+        --ink-2:#8a84ad;
+        --line:rgba(30,27,75,.08);
+        --card:#ffffff;
+        font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
+        position:relative;
+        overflow:hidden;
+        background:
+            radial-gradient(900px 500px at 8% 0%, rgba(99,102,241,.10), transparent 60%),
+            radial-gradient(800px 600px at 100% 15%, rgba(236,72,153,.08), transparent 55%),
+            linear-gradient(180deg, #f6f5fd, #ffffff 40%, #f6f5fd);
+        padding:min(11vw,120px) 0 min(9vw,110px);
+    }
+
+    #about .fondo-decorativo{ position:absolute; inset:0; pointer-events:none; z-index:0; }
+    #about .blob-fondo{ position:absolute; border-radius:50%; filter:blur(80px); opacity:.35; will-change:transform; }
+    #about .bf-1{ width:460px; height:460px; top:-120px; left:-100px; background:radial-gradient(circle at 30% 30%, var(--violet-400), transparent 70%); }
+    #about .bf-2{ width:420px; height:420px; bottom:-140px; right:-80px; background:radial-gradient(circle at 60% 40%, var(--blue-500), transparent 70%); opacity:.22; }
+    #about .bf-3{ width:280px; height:280px; top:46%; right:10%; background:radial-gradient(circle, var(--pink-500), transparent 70%); opacity:.14; }
+
+    #about .contenedor-nosotros{ position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:0 24px; }
+    #about .contenedor-nosotros.ancho-completo{ max-width:100%; padding:0 clamp(24px,4vw,64px); }
+
+    /* ---------- Estado "visible" ---------- */
+    #about [data-revelar]{ transition:opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1), filter .7s ease; }
+    #about [data-revelar].visible{ opacity:1 !important; transform:none; filter:none; }
+
+    /* ---------- Encabezado principal (Sobre Nosotros) ---------- */
+    #about .encabezado-nosotros{ max-width:720px; margin:0 auto 90px; text-align:center; }
+    #about .etiqueta-superior{
+        display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:700; letter-spacing:.06em;
+        color:var(--indigo-600); background:rgba(99,102,241,.1); border:1px solid rgba(99,102,241,.25);
+        padding:6px 14px; border-radius:999px; margin-bottom:20px; opacity:0; transform:translateY(8px);
+        text-transform:uppercase;
+    }
+    #about .etiqueta-superior::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--indigo-500); box-shadow:0 0 0 4px rgba(99,102,241,.18); animation:pulso-punto 2.2s ease-in-out infinite; }
+    @keyframes pulso-punto{ 0%,100%{ box-shadow:0 0 0 4px rgba(99,102,241,.18); } 50%{ box-shadow:0 0 0 8px rgba(99,102,241,.06); } }
+
+    #about .titulo-nosotros{ font-size:clamp(34px,4.6vw,52px); line-height:1.08; font-weight:800; color:var(--ink-0); margin:0 0 18px; letter-spacing:-.02em; }
+    #about .titulo-nosotros .palabra{ display:inline-block; opacity:0; transform:translateY(22px) rotate(1.5deg); filter:blur(6px); }
+    #about .titulo-nosotros .destacada{
+        background:linear-gradient(90deg, var(--indigo-600), var(--violet-500) 40%, var(--pink-500) 75%, var(--amber-500));
+        background-size:300% auto;
+        -webkit-background-clip:text; background-clip:text; color:transparent;
+        animation:brillo-degradado 6s linear infinite;
+    }
+    @keyframes brillo-degradado{ to{ background-position:300% center; } }
+    #about .subtitulo-nosotros{ font-size:16.5px; line-height:1.7; color:var(--ink-1); margin:0; opacity:0; transform:translateY(14px); }
+
+
+    #about .bloque{ display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:56px; padding:60px 0; position:relative; }
+    #about .bloque + .bloque{ border-top:1px solid var(--line); }
+    #about .bloque-vision .texto-bloque{ order:2; }
+    #about .bloque-vision .visual-bloque{ order:1; }
+
+    #about .eyebrow-bloque{ display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:14px; }
+    #about .bloque-mision .eyebrow-bloque{ color:var(--indigo-600); }
+    #about .bloque-vision .eyebrow-bloque{ color:var(--pink-500); }
+    #about .eyebrow-bloque svg{ width:16px; height:16px; }
+    #about .titulo-bloque{ font-size:clamp(28px,3.4vw,38px); font-weight:800; color:var(--ink-0); margin:0 0 16px; letter-spacing:-.01em; }
+    #about .texto-bloque p{ font-size:15.5px; line-height:1.75; color:var(--ink-1); margin:0 0 22px; max-width:460px; }
+    #about .bloque-vision .texto-bloque p{ margin-left:auto; }
+
+    #about .mini-lista{ display:flex; flex-direction:column; gap:12px; padding:0; margin:0; }
+    #about .mini-lista li{ display:flex; align-items:center; gap:10px; font-size:14px; color:var(--ink-1); font-weight:500; list-style:none; }
+    #about .mini-lista .check{
+        width:20px; height:20px; border-radius:7px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+        background:rgba(99,102,241,.12); color:var(--indigo-600);
+    }
+    #about .bloque-vision .mini-lista .check{ background:rgba(236,72,153,.12); color:var(--pink-500); }
+    #about .mini-lista svg{ width:12px; height:12px; }
+
+    /* ---------- Visual: blob orgánico que muta (Misión) ---------- */
+    #about .visual-bloque{ position:relative; height:380px; display:flex; align-items:center; justify-content:center; }
+
+    #about .blob-organico{
+        width:270px; height:270px;
+        background:linear-gradient(135deg, var(--indigo-500), var(--violet-500) 55%, var(--blue-500));
+        border-radius:42% 58% 65% 35% / 45% 45% 55% 55%;
+        animation:mutar-blob 9s ease-in-out infinite, flotar-blob 7s ease-in-out infinite;
+        box-shadow:0 40px 80px -30px rgba(79,70,229,.45);
+        position:relative;
+    }
+    @keyframes mutar-blob{
+        0%,100%{ border-radius:42% 58% 65% 35% / 45% 45% 55% 55%; }
+        33%{ border-radius:58% 42% 35% 65% / 55% 65% 35% 45%; }
+        66%{ border-radius:35% 65% 55% 45% / 40% 55% 45% 60%; }
+    }
+    @keyframes flotar-blob{ 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-14px) rotate(4deg); } }
+
+    #about .nucleo-icono{
+        position:absolute; left:50%; top:50%; width:84px; height:84px; border-radius:50%;
+        transform:translate(-50%,-50%); background:#fff; display:flex; align-items:center; justify-content:center;
+        box-shadow:0 18px 34px -12px rgba(30,27,75,.28);
+        animation:flotar-nucleo 5s ease-in-out infinite;
+    }
+    @keyframes flotar-nucleo{ 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-50%,-50%) scale(1.06); } }
+    #about .nucleo-icono svg{ width:38px; height:38px; color:var(--indigo-600); }
+
+    /* ---------- Chips flotantes (reemplazan a los tickets) ---------- */
+    #about .chip-flotante{
+        position:absolute; display:flex; align-items:center; gap:10px;
+        background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+        border:1px solid rgba(30,27,75,.06);
+        border-radius:16px; padding:10px 14px;
+        box-shadow:0 18px 34px -16px rgba(30,27,75,.28);
+        animation:flotar-chip 6s ease-in-out infinite;
+    }
+    @keyframes flotar-chip{ 0%,100%{ transform:translateY(0) rotate(var(--rot,0deg)); } 50%{ transform:translateY(-14px) rotate(var(--rot,0deg)); } }
+
+    #about .chip-icono{ width:32px; height:32px; border-radius:10px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+    #about .chip-icono svg{ width:16px; height:16px; color:#fff; }
+    #about .chip-texto{ display:flex; flex-direction:column; line-height:1.2; }
+    #about .chip-numero{ font-size:13.5px; font-weight:800; color:var(--ink-0); }
+    #about .chip-label{ font-size:10.5px; color:var(--ink-2); font-weight:600; }
+
+    #about .c-violeta{ background:var(--violet-500); }
+    #about .c-azul{ background:var(--blue-500); }
+    #about .c-rosa{ background:var(--pink-500); }
+    #about .c-ambar{ background:var(--amber-500); }
+
+    #about .cm-1{ top:2%; left:-4%; --rot:-5deg; animation-duration:5.6s; animation-delay:.1s; }
+    #about .cm-2{ bottom:6%; right:-6%; --rot:4deg; animation-duration:6.4s; animation-delay:.8s; }
+
+    /* ---------- Visual: gráfica de crecimiento (Visión) ---------- */
+    #about .escena-vision{ position:relative; width:100%; max-width:400px; height:100%; display:flex; align-items:center; justify-content:center; }
+    #about .aro-vision{
+        position:absolute; width:300px; height:300px; border-radius:50%;
+        background:conic-gradient(from 0deg, var(--blue-500), var(--pink-500), var(--amber-500), var(--blue-500));
+        opacity:.14; animation:girar-aro 16s linear infinite;
+        -webkit-mask:radial-gradient(circle, transparent 62%, black 63%);
+        mask:radial-gradient(circle, transparent 62%, black 63%);
+    }
+    @keyframes girar-aro{ to{ transform:rotate(360deg); } }
+
+    #about .tarjeta-grafica{
+        position:relative; width:300px; background:#fff; border-radius:22px; padding:22px 22px 18px;
+        box-shadow:0 30px 60px -24px rgba(30,27,75,.3); border:1px solid var(--line);
+    }
+    #about .tarjeta-grafica .encabezado-grafica{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px; }
+    #about .tarjeta-grafica .encabezado-grafica strong{ font-size:12.5px; color:var(--ink-2); font-weight:700; text-transform:uppercase; letter-spacing:.04em; }
+    #about .tarjeta-grafica .encabezado-grafica span{ font-size:20px; font-weight:800; color:var(--ink-0); }
+
+    #about .linea-crecimiento{ width:100%; height:110px; }
+    #about .trazo-crecimiento{ stroke-dasharray:260; stroke-dashoffset:260; animation:dibujar-linea 2.6s cubic-bezier(.22,1,.36,1) forwards, ondear-linea 4s ease-in-out 2.6s infinite; }
+    @keyframes dibujar-linea{ to{ stroke-dashoffset:0; } }
+    @keyframes ondear-linea{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-3px); } }
+    #about .punto-crecimiento{ animation:pulso-punto-grafica 1.8s ease-in-out infinite; transform-origin:center; }
+    @keyframes pulso-punto-grafica{ 0%,100%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.6); opacity:.5; } }
+
+    #about .cv-1{ top:-4%; right:-10%; --rot:5deg; animation-duration:5.8s; animation-delay:.3s; }
+    #about .cv-2{ bottom:-4%; left:-8%; --rot:-4deg; animation-duration:6.6s; animation-delay:1s; }
+
+    /* ---------- Equipo ---------- */
+    #about .encabezado-equipo{ text-align:center; max-width:640px; margin:130px auto 46px; }
+    #about .titulo-equipo{ font-size:clamp(24px,3vw,32px); font-weight:800; color:var(--ink-0); margin:0 0 12px; opacity:0; transform:translateY(16px); }
+    #about .subtitulo-equipo{ font-size:15.5px; color:var(--ink-1); line-height:1.6; margin:0; opacity:0; transform:translateY(12px); }
+
+    #about .grid-equipo{ display:grid; grid-template-columns:repeat(5,1fr); gap:22px; position:relative; z-index:1; width:100%; }
+    #about .flotador-dev{ animation:flotar-dev var(--dur-dev,5.5s) ease-in-out infinite; animation-delay:var(--delay-dev,0s); }
+    @keyframes flotar-dev{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
+
+    #about .tarjeta-dev{
+        --tx:0deg; --ty:0deg; --acento:var(--indigo-500);
+        opacity:0; transform:translateY(30px);
+        transition:transform .5s cubic-bezier(.22,1,.36,1), box-shadow .4s ease;
+        border-radius:20px; overflow:hidden; background:var(--card);
+        border:1px solid var(--line);
+        box-shadow:0 10px 30px -18px rgba(30,27,75,.18);
+        transform-style:preserve-3d;
+    }
+    #about .tarjeta-dev.visible{ opacity:1; transform:perspective(900px) translateY(0) rotateX(var(--tx)) rotateY(var(--ty)); }
+    #about .tarjeta-dev:hover{ box-shadow:0 26px 50px -20px color-mix(in srgb, var(--acento) 55%, transparent); border-color:color-mix(in srgb, var(--acento) 35%, transparent); }
+
+    #about .tarjeta-dev::before{ content:''; display:block; height:4px; background:var(--acento); }
+    #about .d-violeta{ --acento:var(--violet-500); }
+    #about .d-azul{ --acento:var(--blue-500); }
+    #about .d-rosa{ --acento:var(--pink-500); }
+    #about .d-ambar{ --acento:var(--amber-500); }
+    #about .d-verde{ --acento:#10b981; }
+
+    #about .foto-dev-contenedor{ position:relative; aspect-ratio:3/3.2; overflow:hidden; background:linear-gradient(160deg,#ede9fe,#f5f3ff); }
+    #about .foto-dev{ width:100%; height:100%; object-fit:cover; display:block; transform:scale(1.04); transition:transform .6s cubic-bezier(.22,1,.36,1); }
+    #about .tarjeta-dev:hover .foto-dev{ transform:scale(1.12); }
+
+    #about .overlay-dev{ position:absolute; inset:0; display:flex; flex-direction:column; justify-content:flex-end; padding:16px; background:linear-gradient(180deg, transparent 40%, rgba(30,27,75,.88) 95%); opacity:0; transform:translateY(10px); transition:opacity .35s ease, transform .35s ease; }
+    #about .tarjeta-dev:hover .overlay-dev{ opacity:1; transform:translateY(0); }
+    #about .bio-dev{ font-size:12.5px; line-height:1.5; color:#e4e1fb; margin:0 0 12px; }
+    #about .redes-dev{ display:flex; gap:8px; }
+    #about .red-dev{ width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.2); color:#fff; transition:background .25s ease; }
+    #about .red-dev:hover{ background:var(--acento); }
+    #about .red-dev svg{ width:14px; height:14px; }
+    #about .nombre-dev{ font-size:15.5px; font-weight:700; color:var(--ink-0); margin:14px 16px 2px; }
+    #about .rol-dev{ font-size:12.5px; color:var(--ink-1); margin:0 16px 16px; font-weight:600; }
+
+    @media (max-width:1100px){
+        #about .grid-equipo{ grid-template-columns:repeat(3,1fr); }
+    }
+    @media (max-width:960px){
+        #about .bloque{ grid-template-columns:1fr; gap:36px; }
+        #about .bloque-vision .texto-bloque, #about .bloque-vision .visual-bloque{ order:initial; }
+        #about .bloque-vision .texto-bloque p{ margin-left:0; }
+        #about .visual-bloque{ height:320px; }
+        #about .grid-equipo{ grid-template-columns:repeat(2,1fr); }
+    }
+    @media (max-width:640px){
+        #about .grid-equipo{ grid-template-columns:1fr; max-width:340px; margin:0 auto; }
+        #about .tarjeta-grafica{ width:260px; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+        #about *{ transition:none !important; animation:none !important; }
+        #about [class]{ opacity:1 !important; transform:none !important; filter:none !important; }
+    }
+</style>
+</head>
+<body>
+    <!-- ABOUT -->
+  <section class="about-section" id="about">
+     <div class="fondo-decorativo" aria-hidden="true">
+        <div class="blob-fondo bf-1" data-parallax="16"></div>
+        <div class="blob-fondo bf-2" data-parallax="24"></div>
+        <div class="blob-fondo bf-3" data-parallax="10"></div>
+    </div>
+
+    <div class="contenedor-nosotros ancho-completo">
+
+        <!-- ================= ENCABEZADO SOBRE NOSOTROS ================= -->
+        <div class="encabezado-nosotros">
+            <span class="etiqueta-superior" data-revelar>Sobre nosotros</span>
+            <h2 class="titulo-nosotros" data-titulo-partido>Conoce al equipo detrás de <span class="destacada">ServiceCore</span></h2>
+            <p class="subtitulo-nosotros" data-revelar data-retraso="150">Construimos herramientas de soporte técnico simples y confiables, con un equipo pequeño y comprometido que cree en resolver problemas reales de cada empresa.</p>
+        </div>
+
+        <!-- ================= MISIÓN ================= -->
+        <div class="bloque bloque-mision" data-revelar>
+            <div class="texto-bloque">
+                
+                <h3 class="titulo-bloque">Misión</h3>
+                <p>Simplificar la gestión de soporte técnico con software claro, rápido y confiable, para que cada empresa resuelva tickets sin fricción.</p>
+                <ul class="mini-lista">
+                    <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span> Flujos simples, sin curva de aprendizaje</li>
+                    <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span> Datos claros para decidir más rápido</li>
+                </ul>
+            </div>
+            <div class="visual-bloque">
+                <div class="blob-organico">
+                    <div class="nucleo-icono">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" data-dibujar>
+                            <path d="M12 2c2.5 2 4 5.5 4 9 0 2-1 4-4 7-3-3-4-5-4-7 0-3.5 1.5-7 4-9z"/>
+                            <circle cx="12" cy="9" r="1.6"/>
+                            <path d="M7 14c-2 1-3 3-3 6 3 0 5-1 6-3M17 14c2 1 3 3 3 6-3 0-5-1-6-3"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="chip-flotante cm-1">
+                    <span class="chip-icono c-violeta">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/></svg>
+                    </span>
+                    <span class="chip-texto"><span class="chip-numero">2.4x</span><span class="chip-label">Más rápido</span></span>
+                </div>
+                <div class="chip-flotante cm-2">
+                    <span class="chip-icono c-azul">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+                    </span>
+                    <span class="chip-texto"><span class="chip-numero">99.9%</span><span class="chip-label">Disponibilidad</span></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= VISIÓN ================= -->
+        <div class="bloque bloque-vision" data-revelar>
+            <div class="texto-bloque">
+               
+                <h3 class="titulo-bloque">Visión</h3>
+                <p>Ser la plataforma de referencia en Latinoamérica para mesas de servicio modernas, presente en cada empresa que quiera crecer sin perder el control de su soporte.</p>
+                <ul class="mini-lista">
+                    <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span> Expansión regional constante</li>
+                    <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span> Producto que evoluciona con el cliente</li>
+                </ul>
+            </div>
+            <div class="visual-bloque">
+                <div class="escena-vision">
+                    <div class="aro-vision"></div>
+                    <div class="tarjeta-grafica">
+                        <div class="encabezado-grafica">
+                            <strong>Empresas clientes</strong>
+                            <span>+120</span>
+                        </div>
+                        <svg class="linea-crecimiento" viewBox="0 0 260 110" fill="none">
+                            <defs>
+                                <linearGradient id="degradadoLinea" x1="0" y1="0" x2="260" y2="0" gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#3b82f6"/>
+                                    <stop offset="55%" stop-color="#8b5cf6"/>
+                                    <stop offset="100%" stop-color="#ec4899"/>
+                                </linearGradient>
+                            </defs>
+                            <path class="trazo-crecimiento" d="M4 92 C40 88, 55 70, 78 66 C104 61, 118 40, 148 34 C176 28, 190 12, 256 8"
+                                  stroke="url(#degradadoLinea)" stroke-width="4" stroke-linecap="round"/>
+                            <circle class="punto-crecimiento" cx="256" cy="8" r="5" fill="#ec4899"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="chip-flotante cv-1">
+                    <span class="chip-icono c-rosa">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
+                    </span>
+                    <span class="chip-texto"><span class="chip-numero">45k+</span><span class="chip-label">Tickets resueltos</span></span>
+                </div>
+                <div class="chip-flotante cv-2">
+                    <span class="chip-icono c-ambar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
+                    </span>
+                    <span class="chip-texto"><span class="chip-numero">8 años</span><span class="chip-label">De experiencia</span></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= EQUIPO DE DESARROLLADORES ================= -->
+        <div class="encabezado-equipo">
+            <h3 class="titulo-equipo" data-revelar>Nuestro equipo de desarrollo</h3>
+            <p class="subtitulo-equipo" data-revelar data-retraso="100">Las personas que diseñan y mantienen ServiceCore todos los días.</p>
+        </div>
+
+        <div class="grid-equipo" data-grupo-escalonado>
+
+            <div class="flotador-dev">
+            <article class="tarjeta-dev d-ambar" data-revelar data-magnetico>
+                <div class="foto-dev-contenedor">
+                    <!-- TODO: reemplazar por la foto real del desarrollador -->
+                    <img src="img/1.jpeg" alt="" class="foto-dev">
+                    <div class="overlay-dev">
+                        <p class="bio-dev">Lidera el desarrollo backend y la arquitectura de base de datos de ServiceCore.</p>
+                        <div class="redes-dev">
+                            <a href="https://github.com/alejocordova" aria-label="GitHub de Alejandro" class="red-dev">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.25.8-.57v-2c-3.2.7-3.9-1.55-3.9-1.55-.53-1.34-1.3-1.7-1.3-1.7-1.06-.73.08-.71.08-.71 1.18.08 1.8 1.2 1.8 1.2 1.04 1.8 2.73 1.28 3.4.98.1-.76.4-1.28.73-1.58-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.24 2.75.12 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.4-5.28 5.68.42.36.78 1.08.78 2.18v3.23c0 .32.21.68.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="nombre-dev">Alejandro Córdova</h4>
+                <p class="rol-dev">Desarrollador Frontend</p>
+            </article>
+            </div>
+
+            <div class="flotador-dev">
+            <article class="tarjeta-dev d-azul" data-revelar data-magnetico>
+                <div class="foto-dev-contenedor">
+                    <img src="img/5.jpeg" alt="" class="foto-dev">
+                    <div class="overlay-dev">
+                        <p class="bio-dev">Responsable del frontend y de que cada pantalla se sienta rápida y clara.</p>
+                        <div class="redes-dev">
+                            
+                            <a href="https://github.com/Rolando-G" aria-label="GitHub de Rolando" class="red-dev">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.25.8-.57v-2c-3.2.7-3.9-1.55-3.9-1.55-.53-1.34-1.3-1.7-1.3-1.7-1.06-.73.08-.71.08-.71 1.18.08 1.8 1.2 1.8 1.2 1.04 1.8 2.73 1.28 3.4.98.1-.76.4-1.28.73-1.58-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.24 2.75.12 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.4-5.28 5.68.42.36.78 1.08.78 2.18v3.23c0 .32.21.68.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+                            </a>
+                           
+                        </div>
+                    </div>
+                </div>
+                <h4 class="nombre-dev">Rolando García</h4>
+                <p class="rol-dev">Desarrollador Backend</p>
+            </article>
+            </div>
+
+            <div class="flotador-dev">
+            <article class="tarjeta-dev d-violeta" data-revelar data-magnetico>
+                <div class="foto-dev-contenedor">
+                    <img src="img/2.jpeg" alt="" class="foto-dev">
+                    <div class="overlay-dev">
+                        <p class="bio-dev">Automatiza despliegues e infraestructura para que todo funcione sin sobresaltos.</p>
+                        <div class="redes-dev">
+                           
+                            <a href="https://github.com/ab-rill" aria-label="GitHub de Abril" class="red-dev">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.25.8-.57v-2c-3.2.7-3.9-1.55-3.9-1.55-.53-1.34-1.3-1.7-1.3-1.7-1.06-.73.08-.71.08-.71 1.18.08 1.8 1.2 1.8 1.2 1.04 1.8 2.73 1.28 3.4.98.1-.76.4-1.28.73-1.58-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.24 2.75.12 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.4-5.28 5.68.42.36.78 1.08.78 2.18v3.23c0 .32.21.68.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+                <h4 class="nombre-dev">Abril Chavajay</h4>
+                <p class="rol-dev">Desarrolladora Frontend</p>
+            </article>
+            </div>
+
+            <div class="flotador-dev">
+            <article class="tarjeta-dev d-rosa" data-revelar data-magnetico>
+                <div class="foto-dev-contenedor">
+                    <img src="img/4.jpeg" alt="" class="foto-dev">
+                    <div class="overlay-dev">
+                        <p class="bio-dev">Diseña la experiencia de usuario para que cada pantalla sea intuitiva.</p>
+                        <div class="redes-dev">
+                          
+                            <a href="https://github.com/JenniMich" aria-label="GitHub de Jennifer" class="red-dev">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.25.8-.57v-2c-3.2.7-3.9-1.55-3.9-1.55-.53-1.34-1.3-1.7-1.3-1.7-1.06-.73.08-.71.08-.71 1.18.08 1.8 1.2 1.8 1.2 1.04 1.8 2.73 1.28 3.4.98.1-.76.4-1.28.73-1.58-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.24 2.75.12 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.4-5.28 5.68.42.36.78 1.08.78 2.18v3.23c0 .32.21.68.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+                            </a>
+                          
+                        </div>
+                    </div>
+                </div>
+                <h4 class="nombre-dev">Jennifer Gerónimo</h4>
+                <p class="rol-dev">Desarrolladora Frontend</p>
+            </article>
+            </div>
+
+            <div class="flotador-dev">
+            <article class="tarjeta-dev d-verde" data-revelar data-magnetico>
+                <div class="foto-dev-contenedor">
+                    <img src="img/5.jpeg" alt="" class="foto-dev">
+                    <div class="overlay-dev">
+                        <p class="bio-dev">Se encarga de calidad y pruebas para que cada entrega llegue sin errores.</p>
+                        <div class="redes-dev">
+                           
+                            <a href="https://github.com/salomon-07" aria-label="GitHub de Salomon" class="red-dev">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.25.8-.57v-2c-3.2.7-3.9-1.55-3.9-1.55-.53-1.34-1.3-1.7-1.3-1.7-1.06-.73.08-.71.08-.71 1.18.08 1.8 1.2 1.8 1.2 1.04 1.8 2.73 1.28 3.4.98.1-.76.4-1.28.73-1.58-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.24 2.75.12 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.4-5.28 5.68.42.36.78 1.08.78 2.18v3.23c0 .32.21.68.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+                            </a>
+                           
+                        </div>
+                    </div>
+                </div>
+                <h4 class="nombre-dev">Salomón Tocón</h4>
+                <p class="rol-dev">Desarrollador Backend</p>
+            </article>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>(function () {
+    'use strict';
+
+    /* 1) Título partido en palabras */
+    function partirTitulo() {
+        const titulo = document.querySelector('[data-titulo-partido]');
+        if (!titulo) return;
+        const nodos = Array.from(titulo.childNodes);
+        titulo.innerHTML = '';
+        nodos.forEach((nodo) => {
+            if (nodo.nodeType === Node.TEXT_NODE) {
+                nodo.textContent.split(' ').forEach((palabra) => {
+                    if (!palabra) return;
+                    const span = document.createElement('span');
+                    span.className = 'palabra';
+                    span.textContent = palabra + '\u00A0';
+                    titulo.appendChild(span);
+                });
+            } else {
+                nodo.classList.add('palabra');
+                titulo.appendChild(nodo);
+            }
+        });
+        const palabras = titulo.querySelectorAll('.palabra');
+        const observador = new IntersectionObserver((entradas) => {
+            entradas.forEach((entrada) => {
+                if (!entrada.isIntersecting) return;
+                palabras.forEach((palabra, i) => {
+                    setTimeout(() => {
+                        palabra.style.transition = 'opacity .6s ease, transform .6s cubic-bezier(.22,1,.36,1), filter .6s ease';
+                        palabra.style.opacity = '1';
+                        palabra.style.transform = 'translateY(0) rotate(0deg)';
+                        palabra.style.filter = 'blur(0)';
+                    }, i * 55);
+                });
+                observador.unobserve(titulo);
+            });
+        }, { threshold: 0.4 });
+        observador.observe(titulo);
+    }
+
+    /* 2) Scroll reveal genérico, con escalonado automático en grupos */
+    function iniciarScrollReveal() {
+        const elementos = document.querySelectorAll('#about [data-revelar]');
+        if (!elementos.length) return;
+        const observador = new IntersectionObserver((entradas) => {
+            entradas.forEach((entrada) => {
+                if (!entrada.isIntersecting) return;
+                const el = entrada.target;
+                const grupo = el.closest('[data-grupo-escalonado]');
+                let retraso = Number(el.dataset.retraso || 0);
+                if (grupo) {
+                    const hermanos = Array.from(grupo.children);
+                    retraso = hermanos.indexOf(el.closest('.flotador-dev') || el) * 100;
+                }
+                setTimeout(() => el.classList.add('visible'), retraso);
+                observador.unobserve(el);
+            });
+        }, { threshold: 0.15 });
+        elementos.forEach((el) => observador.observe(el));
+    }
+
+    /* 3) Íconos que se dibujan al entrar */
+    function iniciarDibujoIconos() {
+        const svgs = document.querySelectorAll('[data-dibujar]');
+        if (!svgs.length) return;
+        svgs.forEach((svg) => {
+            const formas = svg.querySelectorAll('path, circle');
+            formas.forEach((forma) => {
+                const largo = forma.getTotalLength ? forma.getTotalLength() : 60;
+                forma.style.strokeDasharray = largo;
+                forma.style.strokeDashoffset = largo;
+                forma.style.transition = 'stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1)';
+            });
+        });
+        const observador = new IntersectionObserver((entradas) => {
+            entradas.forEach((entrada) => {
+                if (!entrada.isIntersecting) return;
+                const formas = entrada.target.querySelectorAll('path, circle');
+                setTimeout(() => formas.forEach((f) => (f.style.strokeDashoffset = '0')), 200);
+                observador.unobserve(entrada.target);
+            });
+        }, { threshold: 0.5 });
+        svgs.forEach((svg) => observador.observe(svg));
+    }
+
+    /* 4) Tilt 3D + magnetismo en tarjetas de equipo */
+    function iniciarTarjetasEquipo() {
+        const tarjetas = document.querySelectorAll('[data-magnetico]');
+        tarjetas.forEach((tarjeta) => {
+            tarjeta.addEventListener('mousemove', (evento) => {
+                const rect = tarjeta.getBoundingClientRect();
+                const px = (evento.clientX - rect.left) / rect.width - 0.5;
+                const py = (evento.clientY - rect.top) / rect.height - 0.5;
+                tarjeta.style.setProperty('--tx', `${(-py * 7).toFixed(2)}deg`);
+                tarjeta.style.setProperty('--ty', `${(px * 7).toFixed(2)}deg`);
+            });
+            tarjeta.addEventListener('mouseleave', () => {
+                tarjeta.style.setProperty('--tx', '0deg');
+                tarjeta.style.setProperty('--ty', '0deg');
+            });
+            tarjeta.querySelectorAll('.red-dev').forEach((icono) => {
+                icono.addEventListener('mousemove', (evento) => {
+                    const rect = icono.getBoundingClientRect();
+                    const x = evento.clientX - rect.left - rect.width / 2;
+                    const y = evento.clientY - rect.top - rect.height / 2;
+                    icono.style.transform = `translate(${x * 0.35}px, ${y * 0.35}px)`;
+                });
+                icono.addEventListener('mouseleave', () => {
+                    icono.style.transition = 'transform .3s cubic-bezier(.22,1,.36,1)';
+                    icono.style.transform = '';
+                    setTimeout(() => (icono.style.transition = ''), 300);
+                });
+            });
+        });
+    }
+
+    /* 5) Retrasos aleatorios para que el flotado del equipo no vaya sincronizado */
+    function variarFlotadoEquipo() {
+        document.querySelectorAll('.flotador-dev').forEach((el, i) => {
+            el.style.setProperty('--dur-dev', `${(5 + Math.random() * 2.2).toFixed(2)}s`);
+            el.style.setProperty('--delay-dev', `${(i * 0.35).toFixed(2)}s`);
+        });
+    }
+
+    /* 6) Parallax de blobs de fondo siguiendo el cursor */
+    function iniciarParallaxBlobs() {
+        const blobs = document.querySelectorAll('[data-parallax]');
+        if (!blobs.length) return;
+        const seccion = document.getElementById('about');
+        let mouseX = 0, mouseY = 0, actualX = 0, actualY = 0;
+        seccion.addEventListener('mousemove', (evento) => {
+            const rect = seccion.getBoundingClientRect();
+            mouseX = (evento.clientX - rect.left) / rect.width - 0.5;
+            mouseY = (evento.clientY - rect.top) / rect.height - 0.5;
+        });
+        function animar() {
+            actualX += (mouseX - actualX) * 0.05;
+            actualY += (mouseY - actualY) * 0.05;
+            blobs.forEach((blob) => {
+                const fuerza = Number(blob.dataset.parallax || 15);
+                blob.style.transform = `translate(${actualX * fuerza}px, ${actualY * fuerza}px)`;
+            });
+            requestAnimationFrame(animar);
+        }
+        requestAnimationFrame(animar);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        partirTitulo();
+        iniciarScrollReveal();
+        iniciarDibujoIconos();
+        iniciarTarjetasEquipo();
+        variarFlotadoEquipo();
+        iniciarParallaxBlobs();
+    });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+Options -Indexes
+RewriteEngine On
+
+# Bloquear acceso directo a archivos sensibles
+<FilesMatch "\.(env|log|sql|json|lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Bloquear acceso a carpetas internas
+RedirectMatch 403 ^/vendor/.*$
+
+# Redirigir API a su router
+RewriteRule ^api/(.*)$ /api/index.php [QSA,L]

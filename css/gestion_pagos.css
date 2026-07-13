@@ -1,0 +1,41 @@
+@import url("admin_empresas.css");
+
+.badge-yellow {
+    background: var(--sc-yellow-bg, #fef3c7);
+    color: var(--sc-yellow, #b45309);
+}
+
+.badge-red {
+    background: var(--sc-red-bg, #fee2e2);
+    color: var(--sc-red, #dc2626);
+}
+
+.pago-row {
+    transition: background .15s ease, opacity .15s ease;
+}
+
+.pago-row:hover {
+    background: #fafafe;
+}
+
+.pago-row:last-child td {
+    border-bottom: 0;
+}
+
+.pago-row.row-hidden {
+    display: none;
+}
+
+.pago-row[data-estado="0"] {
+    opacity: .85;
+}
+
+.kpi-loading {
+    opacity: .4;
+}
+
+@media (max-width: 860px) {
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+}

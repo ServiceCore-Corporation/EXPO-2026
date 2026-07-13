@@ -1,0 +1,50 @@
+/* ---- 404: a piece of the core is missing ---- */
+  .mark--404 .bar--3{
+    position:relative;
+    opacity:0;
+  }
+  .ghost-slot{
+    position:absolute;
+    height:var(--bar-h);
+    width:calc(var(--bar-h) * 0.4267);
+    border:1.5px dashed rgba(223,231,244,0.32);
+    border-radius:999px;
+    top:0;
+  }
+  .mark--404 .bar--1{
+    animation: search-sway 3.6s ease-in-out infinite;
+    transform-origin:50% 100%;
+  }
+  .mark--404 .bar--2{
+    animation: search-sway 3.6s ease-in-out infinite -1.2s;
+    transform-origin:50% 100%;
+  }
+  @keyframes search-sway{
+    0%,100%{ transform:rotate(-2.5deg) translateY(0); }
+    50%{ transform:rotate(2.5deg) translateY(-3px); }
+  }
+  .ghost-slot{
+    animation: ghost-pulse 3.6s ease-in-out infinite;
+  }
+  @keyframes ghost-pulse{
+    0%,100%{ opacity:.35; }
+    50%{ opacity:.85; }
+  }
+  .code-big{
+    font-family:var(--font-mono);
+    font-weight:700;
+    font-size:14px;
+    letter-spacing:.3em;
+    color:var(--periwinkle);
+    margin-bottom:6px;
+  }
+
+  @media (max-width: 640px) {
+    .ghost-slot {
+      width: calc(var(--bar-h) * 0.5);
+    }
+    .code-big {
+      font-size: 12px;
+      letter-spacing: .25em;
+    }
+  }

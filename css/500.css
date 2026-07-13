@@ -1,0 +1,89 @@
+/* ---- 500: the core stuttered. fractured, recovering. ---- */
+  .mark--500{
+    position:relative;
+  }
+  .mark--500 .bar{
+    position:relative;
+  }
+  .mark--500 .bar--1{ animation: glitch-a 2.6s infinite steps(1); }
+  .mark--500 .bar--2{ animation: glitch-b 2.6s infinite steps(1) -.15s; }
+  .mark--500 .bar--3{ animation: glitch-c 2.6s infinite steps(1) -.32s; }
+
+  @keyframes glitch-a{
+    0%, 78%, 100%{ transform:translate(0,0); filter:none; opacity:1; }
+    80%{ transform:translate(-6px,0); opacity:.55; }
+    82%{ transform:translate(4px,1px); opacity:1; }
+    84%{ transform:translate(0,0); }
+  }
+  @keyframes glitch-b{
+    0%, 70%, 100%{ transform:translate(0,0); opacity:1; }
+    72%{ transform:translate(5px,-2px); opacity:.6; }
+    75%{ transform:translate(-4px,0); opacity:1; }
+    77%{ transform:translate(0,0); }
+  }
+  @keyframes glitch-c{
+    0%, 86%, 100%{ transform:translate(0,0); opacity:1; }
+    88%{ transform:translate(-5px,1px) ; opacity:.5; }
+    90%{ transform:translate(3px,0); opacity:1; }
+    92%{ transform:translate(0,0); }
+  }
+
+  .slice-ghost{
+    position:absolute;
+    top:0; left:0;
+    height:var(--bar-h);
+    width:100%;
+    background:linear-gradient(180deg, rgba(119,115,235,0.55), rgba(223,231,244,0.15));
+    border-radius:999px;
+    mix-blend-mode:screen;
+    opacity:0;
+    pointer-events:none;
+  }
+  .mark--500 .bar--1 .slice-ghost{ animation: flick-a 2.6s infinite steps(1); }
+  @keyframes flick-a{
+    0%, 79%, 84%, 100%{ opacity:0; }
+    80%, 83%{ opacity:.5; transform:translateX(7px); }
+  }
+
+  .code-big{
+    font-family:var(--font-mono);
+    font-weight:700;
+    font-size:14px;
+    letter-spacing:.3em;
+    color:var(--periwinkle);
+    margin-bottom:6px;
+  }
+
+  .statusline{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    letter-spacing:.08em;
+    color:rgba(223,231,244,0.55);
+    margin-top:-10px;
+    margin-bottom:30px;
+  }
+  .statusline .pip{
+    width:6px; height:6px; border-radius:50%;
+    background:#e9a23b;
+    box-shadow:0 0 0 3px rgba(233,162,59,0.18);
+    animation:pip-blink 1.6s ease-in-out infinite;
+    margin-right:8px;
+    flex:none;
+  }
+  @keyframes pip-blink{ 0%,100%{opacity:1;} 50%{opacity:.35;} }
+
+  @media (max-width: 640px) {
+    .statusline {
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+    .statusline .pip {
+      width: 5px;
+      height: 5px;
+      margin-right: 4px;
+    }
+  }

@@ -1,0 +1,82 @@
+body{ justify-content:center; }
+  .stage{ max-width:420px; }
+
+  /* ---- loading: the core's pulse, breathing in a wave ---- */
+  .mark--load{
+    --bar-h:108px;
+    margin-bottom:34px;
+  }
+  .mark--load .bar{
+    animation: wave 1.6s ease-in-out infinite;
+    transform-origin:50% 100%;
+  }
+  .mark--load .bar--1{ animation-delay:0s; }
+  .mark--load .bar--2{ animation-delay:.18s; }
+  .mark--load .bar--3{ animation-delay:.36s; }
+
+  @keyframes wave{
+    0%, 100%{ transform:scaleY(0.74) translateY(0); }
+    50%{ transform:scaleY(1) translateY(-6px); }
+  }
+
+  .wordmark{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:22px;
+    letter-spacing:-0.01em;
+    color:var(--paper);
+    margin:0 0 8px;
+  }
+  .wordmark b{
+    color:var(--periwinkle);
+    font-weight:600;
+  }
+
+  .status{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    letter-spacing:.04em;
+    color:rgba(223,231,244,0.6);
+    height:18px;
+    margin-bottom:26px;
+  }
+
+  .progress-track{
+    width:220px;
+    height:3px;
+    border-radius:999px;
+    background:rgba(223,231,244,0.15);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:30%;
+    border-radius:999px;
+    background:linear-gradient(90deg, var(--royal), var(--periwinkle));
+    animation: indeterminate 1.7s ease-in-out infinite;
+  }
+  @keyframes indeterminate{
+    0%{ transform:translateX(-100%); width:35%; }
+    50%{ width:55%; }
+    100%{ transform:translateX(280%); width:35%; }
+  }
+
+@media (max-width: 640px) {
+  .mark--load{
+    --bar-h:78px;
+    margin-bottom:28px;
+  }
+
+  .wordmark{
+    font-size:18px;
+  }
+
+  .status{
+    font-size:12px;
+    margin-bottom:20px;
+  }
+
+  .progress-track{
+    width:180px;
+  }
+}

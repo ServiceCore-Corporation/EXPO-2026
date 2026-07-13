@@ -1,0 +1,76 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f5f7ff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.contenido {
+  flex: 1;
+}
+
+.tarjeta {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid #dfe7fa;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: .3s;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  color: #c7c9ff;
+  transition: .3s;
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, .08);
+  color: white;
+  transform: translateX(5px);
+}
+
+.menu-item.activo {
+  background: #5750ad;
+  color: white;
+}
+
+@media (max-width: 900px) {
+  .app {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .sidebar {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .tarjeta {
+    padding: 18px;
+  }
+
+  .menu-item {
+    gap: 10px;
+    padding: 10px 14px;
+  }
+
+  .boton,
+  .sb-new-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .tarjeta {
+    padding: 16px;
+  }
+}

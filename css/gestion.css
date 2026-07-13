@@ -1,0 +1,401 @@
+/* css/gestion.css
+   Hoja de estilos compartida por las vistas de "gestión" con layout
+   sidebar + tabla (Historial y Auditoría, Gestión de Galería, Gestión de
+   Carrusel). Estas vistas usan Tailwind (CDN) para el layout general y
+   estas clases *-sc para los componentes propios de ServiceCore. */
+
+:root {
+    --sc-primary: #5750ad;
+    --sc-primary-dark: #1e1858;
+    --sc-primary-soft: #eeecfb;
+    --sc-border: #e4e6fb;
+    --sc-text: #1e1858;
+    --sc-muted: #6b7280;
+    --sc-green: #16a34a;
+    --sc-green-bg: #dcfce7;
+    --sc-blue: #2563eb;
+    --sc-blue-bg: #dbeafe;
+    --sc-red: #dc2626;
+    --sc-red-bg: #fee2e2;
+    --sc-yellow: #b45309;
+    --sc-yellow-bg: #fef3c7;
+    --sc-radius: 16px;
+    --sc-shadow: 0 8px 24px rgba(30, 24, 88, .08);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f5f7ff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ---------- Menú lateral ---------- */
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    color: #c7c9ff;
+    text-decoration: none;
+    transition: .2s;
+}
+
+.menu-item:hover {
+    background: rgba(255, 255, 255, .08);
+    color: white;
+    transform: translateX(4px);
+}
+
+.menu-item.activo {
+    background: var(--sc-primary);
+    color: white;
+    font-weight: 600;
+}
+
+/* ---------- Contenedor principal ---------- */
+.contenido {
+    flex: 1;
+}
+
+/* ---------- Encabezado de página ---------- */
+.page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.page-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--sc-primary-dark);
+    line-height: 1.25;
+    margin-top: 30px;
+}
+
+.page-subtitle {
+    font-size: 14px;
+    color: var(--sc-muted);
+    margin-top: 4px;
+    max-width: 620px;
+}
+
+/* ---------- Botones ---------- */
+.btn-primary-sc {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--sc-primary);
+    color: white;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .2s;
+    text-decoration: none;
+}
+
+.btn-primary-sc:hover {
+    background: #4a4396;
+    box-shadow: 0 6px 16px rgba(87, 80, 173, .35);
+}
+
+.btn-primary-sc .material-symbols-outlined {
+    font-size: 18px !important;
+}
+
+.btn-icon-sc {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid var(--sc-border);
+    background: white;
+    color: var(--sc-muted);
+    cursor: pointer;
+    text-decoration: none;
+    transition: .15s;
+}
+
+.btn-icon-sc:hover {
+    transform: translateY(-1px);
+}
+
+.btn-icon-sc.edit:hover {
+    border-color: var(--sc-primary);
+    color: var(--sc-primary);
+    background: var(--sc-primary-soft);
+}
+
+.btn-icon-sc.delete:hover {
+    border-color: var(--sc-red);
+    color: var(--sc-red);
+    background: var(--sc-red-bg);
+}
+
+/* ---------- Tarjeta contenedora ---------- */
+.card-sc {
+    background: white;
+    border-radius: var(--sc-radius);
+    box-shadow: var(--sc-shadow);
+    border: 1px solid var(--sc-border);
+}
+
+/* ---------- Barra de filtros ---------- */
+.filtros-sc {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr) auto;
+    gap: 14px;
+    align-items: end;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--sc-border);
+    background: #fbfbfe;
+}
+
+@media (max-width: 1200px) {
+    .filtros-sc {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.form-label-sc {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sc-muted);
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    margin-bottom: 6px;
+}
+
+.form-input-sc {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--sc-border);
+    font-size: 13px;
+    color: var(--sc-text);
+    background: white;
+    outline: none;
+    transition: .15s;
+}
+
+.form-input-sc:focus {
+    border-color: var(--sc-primary);
+    box-shadow: 0 0 0 3px rgba(87, 80, 173, .15);
+}
+
+/* ---------- Tabla ---------- */
+.table-sc {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.table-sc thead th {
+    text-align: left;
+    padding: 14px 20px;
+    background: #f8f8fd;
+    color: var(--sc-muted);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    border-bottom: 1px solid var(--sc-border);
+    white-space: nowrap;
+}
+
+.table-sc tbody td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--sc-border);
+    color: var(--sc-text);
+    vertical-align: middle;
+}
+
+.table-sc tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-sc tbody tr:hover {
+    background: #fafaff;
+}
+
+.table-sc .row-hidden {
+    display: none;
+}
+
+/* ---------- Estado vacío ---------- */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 48px 20px;
+    color: #9ca3af;
+    font-size: 14px;
+    text-align: center;
+}
+
+.empty-state .material-symbols-outlined {
+    font-size: 34px !important;
+    color: #c7c9f5;
+}
+
+/* ---------- Badges de acción (historial) ---------- */
+.badge-sc {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.badge-crear {
+    background: var(--sc-green-bg);
+    color: var(--sc-green);
+}
+
+.badge-editar {
+    background: var(--sc-blue-bg);
+    color: var(--sc-blue);
+}
+
+.badge-eliminar {
+    background: var(--sc-red-bg);
+    color: var(--sc-red);
+}
+
+.badge-otro {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+/* ---------- Miniaturas (galería / carrusel) ---------- */
+.thumb-sc {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 1px solid var(--sc-border);
+    background: #f3f4f6;
+}
+
+/* ---------- Modal ---------- */
+.modal-overlay-sc {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 15, 30, .5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 60;
+    padding: 16px;
+}
+
+.modal-overlay-sc.activo {
+    display: flex;
+}
+
+.modal-box-sc {
+    background: white;
+    width: 100%;
+    max-width: 520px;
+    border-radius: var(--sc-radius);
+    padding: 28px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, .3);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-title-sc {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--sc-primary-dark);
+    margin-bottom: 18px;
+}
+
+/* ---------- Subida de imágenes ---------- */
+.upload-drop-sc {
+    border: 2px dashed var(--sc-border);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: .15s;
+    background: #fbfbfe;
+}
+
+.upload-drop-sc:hover {
+    border-color: var(--sc-primary);
+    background: var(--sc-primary-soft);
+}
+
+.upload-preview-sc {
+    display: none;
+    margin-top: 12px;
+    max-height: 160px;
+    border-radius: 10px;
+    width: 100%;
+    object-fit: cover;
+}
+
+/* ---------- Spinner ---------- */
+.spinner-sc {
+    width: 26px;
+    height: 26px;
+    border: 3px solid var(--sc-border);
+    border-top-color: var(--sc-primary);
+    border-radius: 50%;
+    margin: 24px auto;
+    animation: spin-sc .7s linear infinite;
+}
+
+@keyframes spin-sc {
+    to { transform: rotate(360deg); }
+}
+
+/* ---------- Toast ---------- */
+.toast-sc {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    transform: translate(-50%, 20px);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--sc-primary-dark);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, .25);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease, transform .2s ease;
+    z-index: 80;
+}
+
+.toast-sc.mostrar {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+.toast-sc.error {
+    background: var(--sc-red);
+}
+
+.toast-sc.exito {
+    background: var(--sc-green);
+}
