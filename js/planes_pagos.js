@@ -60,60 +60,7 @@ async function cargarTablaPlanes(idTbody = 'cuerpo-planes') {
 }
 
 async function editarPlan(idPlan) {
-    try {
-        const plan = await obtenerPlan(idPlan);
-        document.getElementById('plan-id').value             = plan.id_plan;
-        document.getElementById('plan-nombre').value         = plan.nombre;
-        document.getElementById('plan-precio').value         = plan.precio;
-        document.getElementById('plan-limite-usuarios').value = plan.limite_usuarios;
-        document.getElementById('plan-limite-tickets').value  = plan.limite_tickets;
-        document.getElementById('titulo-formulario-plan').textContent = 'Editar Plan';
-    } catch (error) {
-        mostrarMensaje('msg-planes', 'Error al cargar plan.', true);
-    }
-}
-
-async function confirmarEliminarPlan(idPlan) {
-    if (!confirm('¿Eliminar este plan?')) return;
-    try {
-        await eliminarPlan(idPlan);
-        mostrarMensaje('msg-planes', 'Plan eliminado.');
-        cargarTablaPlanes();
-    } catch (error) {
-        mostrarMensaje('msg-planes', error.message, true);
-    }
-}
-
-const formularioPlan = document.getElementById('formulario-plan');
-if (formularioPlan) {
-    formularioPlan.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const idPlan    = document.getElementById('plan-id').value;
-        const datosPlan = {
-            nombre:          document.getElementById('plan-nombre').value.trim(),
-            precio:          parseFloat(document.getElementById('plan-precio').value),
-            limite_usuarios: parseInt(document.getElementById('plan-limite-usuarios').value),
-            limite_tickets:  parseInt(document.getElementById('plan-limite-tickets').value),
-            activo:          1
-        };
-
-        try {
-            if (idPlan) {
-                await actualizarPlan(idPlan, datosPlan);
-                mostrarMensaje('msg-planes', 'Plan actualizado.');
-            } else {
-                await crearPlan(datosPlan);
-                mostrarMensaje('msg-planes', 'Plan creado.');
-            }
-            limpiarFormulario('formulario-plan');
-            document.getElementById('plan-id').value = '';
-            document.getElementById('titulo-formulario-plan').textContent = 'Nuevo Plan';
-            cargarTablaPlanes();
-        } catch (error) {
-            mostrarMensaje('msg-planes', error.message, true);
-        }
-    });
+    return await obtenerPlan(idPlan);
 }
 
 // ── PAGOS ─────────────────────────────────────────────────────
@@ -142,76 +89,62 @@ async function obtenerPagosPorEmpresa(idEmpresa) {
     return await peticion(`/api/pagos/empresa/${idEmpresa}`);
 }
 
+function badgeEstadoPago(estado) {
+    estado = parseInt(estado);
+    if (estado === 1) return { texto: 'Pagado',    clase: 'badge-green' };
+    if (estado === 2) return { texto: 'Rechazado', clase: 'badge-red' };
+    return { texto: 'Pendiente', clase: 'badge-yellow' };
+}
+
 function renderizarTablaPagos(lista, idTbody) {
     const cuerpo = document.getElementById(idTbody);
     if (!cuerpo) return;
 
     if (lista.length === 0) {
-        cuerpo.innerHTML = '<tr><td colspan="5" class="sin-datos">Sin pagos</td></tr>';
+        cuerpo.innerHTML = '<tr><td colspan="6" class="sin-datos">Sin pagos</td></tr>';
         return;
     }
 
-    cuerpo.innerHTML = lista.map(pago => `
-        <tr>
-            <td>${pago.id_pago}</td>
-            <td>${pago.empresa || '—'}</td>
-            <td>$${parseFloat(pago.monto).toFixed(2)}</td>
+    cuerpo.innerHTML = lista.map(pago => {
+        const estadoInfo = badgeEstadoPago(pago.estado);
+        return `
+        <tr class="pago-row" data-estado="${pago.estado}">
+            <td>
+                <span class="plan-nombre">
+                    <span class="material-symbols-outlined">business</span>
+                    <strong>${pago.empresa || '—'}</strong>
+                </span>
+            </td>
+            <td>Q${parseFloat(pago.monto).toFixed(2)}</td>
             <td>${pago.metodo_pago}</td>
             <td>${new Date(pago.fecha_pago).toLocaleDateString('es-GT')}</td>
-            <td class="acciones">
-                <button class="peligro" onclick="confirmarEliminarPago(${pago.id_pago})">Eliminar</button>
+            <td><span class="badge ${estadoInfo.clase}">${estadoInfo.texto}</span></td>
+            <td>
+                <div class="row-actions">
+                    <button class="row-icon-btn" data-action="editar-pago" data-id="${pago.id_pago}" title="Editar pago">
+                        <span class="material-symbols-outlined">edit</span>
+                    </button>
+                    <button class="row-icon-btn" data-action="eliminar-pago" data-id="${pago.id_pago}" title="Eliminar pago">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
             </td>
-        </tr>
-    `).join('');
+        </tr>`;
+    }).join('');
 }
 
 async function cargarTablaPagos(idTbody = 'cuerpo-pagos') {
     try {
         const lista = await obtenerPagos();
         renderizarTablaPagos(lista, idTbody);
+        return lista;
     } catch (error) {
         console.error('Error cargando pagos:', error);
+        return [];
     }
 }
 
-async function confirmarEliminarPago(idPago) {
-    if (!confirm('¿Eliminar este pago?')) return;
-    try {
-        await eliminarPago(idPago);
-        mostrarMensaje('msg-pagos', 'Pago eliminado.');
-        cargarTablaPagos();
-    } catch (error) {
-        mostrarMensaje('msg-pagos', error.message, true);
-    }
-}
-
-const formularioPago = document.getElementById('formulario-pago');
-if (formularioPago) {
-    formularioPago.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const idPago    = document.getElementById('pago-id').value;
-        const datosPago = {
-            id_empresa:  parseInt(document.getElementById('pago-empresa').value),
-            monto:       parseFloat(document.getElementById('pago-monto').value),
-            metodo_pago: document.getElementById('pago-metodo').value.trim(),
-            fecha_pago:  document.getElementById('pago-fecha').value,
-            estado:      1
-        };
-
-        try {
-            if (idPago) {
-                await actualizarPago(idPago, datosPago);
-                mostrarMensaje('msg-pagos', 'Pago actualizado.');
-            } else {
-                await crearPago(datosPago);
-                mostrarMensaje('msg-pagos', 'Pago registrado.');
-            }
-            limpiarFormulario('formulario-pago');
-            document.getElementById('pago-id').value = '';
-            cargarTablaPagos();
-        } catch (error) {
-            mostrarMensaje('msg-pagos', error.message, true);
-        }
-    });
+async function editarPago(idPago) {
+    const pago = await obtenerPago(idPago);
+    return pago;
 }

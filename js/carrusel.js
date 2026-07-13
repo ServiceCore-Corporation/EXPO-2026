@@ -1,76 +1,68 @@
-document.addEventListener('DOMContentLoaded', function () {
-  const slides = Array.from(document.querySelectorAll('.car-slide'));
-  const dots = Array.from(document.querySelectorAll('.car-dot'));
+document.addEventListener('DOMContentLoaded', () => {
+
+  const track   = document.getElementById('carTrack');
+  const section = document.getElementById('carousel-section');
+  if (!track || typeof gsap === 'undefined') return;
+
+  const slides = Array.from(track.querySelectorAll('.car-slide'));
+  const dots   = Array.from(document.querySelectorAll('.car-dot'));
   const prevBtn = document.getElementById('carPrev');
   const nextBtn = document.getElementById('carNext');
-
   if (!slides.length) return;
 
+  let hasScrollTrigger = typeof ScrollTrigger !== 'undefined';
+  if (hasScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+
+  function slideStep() {
+    const style = getComputedStyle(track);
+    const gap = parseFloat(style.columnGap || style.gap || 0);
+    return slides[0].getBoundingClientRect().width + gap;
+  }
+
+  function maxScroll() {
+    return Math.max(0, slideStep() * (slides.length - 1));
+  }
+
+  function setActiveDot(index) {
+    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+  }
+
   let current = 0;
-  const total = slides.length;
-  let autoplay;
-  const AUTOPLAY_DELAY = 4000;
+  let scrollDriven = false;
 
-  function render() {
-    slides.forEach((slide, i) => {
-      slide.classList.remove('is-active', 'is-prev', 'is-next', 'is-prev2', 'is-next2');
+  function goTo(index, animate = true) {
+    current = gsap.utils.clamp(0, slides.length - 1, index);
+    const x = -current * slideStep();
+    gsap.to(track, { x, duration: animate ? .6 : 0, ease: 'power3.out' });
+    setActiveDot(current);
+  }
 
-      const diff = (i - current + total) % total;
+  prevBtn && prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn && nextBtn.addEventListener('click', () => goTo(current + 1));
+  dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
 
-      if (diff === 0) {
-        slide.classList.add('is-active');
-      } else if (diff === 1) {
-        slide.classList.add('is-next');
-      } else if (diff === total - 1) {
-        slide.classList.add('is-prev');
-      } else if (diff === 2) {
-        slide.classList.add('is-next2');
-      } else if (diff === total - 2) {
-        slide.classList.add('is-prev2');
+  if (hasScrollTrigger && slides.length > 1) {
+    scrollDriven = true;
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top top+=80',
+      end: () => '+=' + (maxScroll() + window.innerHeight * 0.6),
+      pin: true,
+      scrub: 0.6,
+      onUpdate: self => {
+        const x = -self.progress * maxScroll();
+        gsap.set(track, { x });
+        const idx = Math.round(self.progress * (slides.length - 1));
+        setActiveDot(idx);
+        current = idx;
       }
     });
-
-    dots.forEach((dot, i) => dot.classList.toggle('active', i === current));
+  } else {
+    goTo(0, false);
   }
 
-  function goTo(index) {
-    current = (index + total) % total;
-    render();
-  }
-
-  function next() { goTo(current + 1); }
-  function prev() { goTo(current - 1); }
-
-  function startAutoplay() {
-    stopAutoplay();
-    autoplay = setInterval(next, AUTOPLAY_DELAY);
-  }
-
-  function stopAutoplay() {
-    if (autoplay) clearInterval(autoplay);
-  }
-
-  nextBtn.addEventListener('click', () => { next(); startAutoplay(); });
-  prevBtn.addEventListener('click', () => { prev(); startAutoplay(); });
-
-  dots.forEach(dot => {
-    dot.addEventListener('click', () => {
-      goTo(parseInt(dot.dataset.index, 10));
-      startAutoplay();
-    });
+  window.addEventListener('resize', () => {
+    if (hasScrollTrigger) ScrollTrigger.refresh();
+    else goTo(current, false);
   });
-
-  slides.forEach(slide => {
-    slide.addEventListener('click', () => {
-      goTo(parseInt(slide.dataset.index, 10));
-      startAutoplay();
-    });
-  });
-
-  const wrap = document.getElementById('carouselWrap');
-  wrap.addEventListener('mouseenter', stopAutoplay);
-  wrap.addEventListener('mouseleave', startAutoplay);
-
-  render();
-  startAutoplay();
 });

@@ -10,7 +10,7 @@ if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
     switch ((int)$_SESSION['id_rol']) {
         case 1: header("Location: vistas/Admin/dashboard_admin.php"); break;
         case 2: header("Location: vistas/Admin_Empresa/dashboard_admin_emp.php"); break;
-        case 3: header(" Location: vistas/Agente/dashboard_agente.php"); break;
+        case 3: header("Location: vistas/Agente/dashboard_agente.php"); break;
         case 4: header("Location: vistas/Supervisor/dashboard_aprovador.php"); break;
         case 5: header("Location: vistas/Cliente/dashboard_cliente.php"); break;
         default:
@@ -21,6 +21,106 @@ if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
     exit();
 }
 
+?>
+
+<?php
+require_once 'conexion.php';
+
+// Valores por defecto seguros: si alguna consulta falla (por ejemplo si
+// todavía falta correr una migración reciente), la página pública sigue
+// funcionando en vez de caerse con un error 500 para todos los visitantes.
+$prioridadesActivas = ['Alta' => 0, 'Media' => 0, 'Baja' => 0];
+$ticketsActivosTotal = 0;
+$capacidadPct = 0;
+$indiceResolucion = 0;
+$respuestaMediaTexto = '—';
+$resolutividadTexto = '+0%';
+$agentesOnline = 0;
+$empresasActivas = 0;
+
+try {
+    $resPrioridad = $conn->query("
+        SELECT p.nombre AS prioridad, COUNT(*) AS total
+        FROM ticket t
+        JOIN estado e ON e.id_estado = t.id_estado
+        JOIN prioridad p ON p.id_prioridad = t.id_prioridad
+        WHERE e.nombre NOT IN ('Cerrado', 'Cancelado')
+        GROUP BY p.nombre
+    ");
+    if ($resPrioridad) {
+        while ($row = $resPrioridad->fetch_assoc()) {
+            if (isset($prioridadesActivas[$row['prioridad']])) {
+                $prioridadesActivas[$row['prioridad']] = (int)$row['total'];
+            }
+        }
+    }
+    $ticketsActivosTotal = array_sum($prioridadesActivas);
+
+    $enProceso = (int)($conn->query("
+        SELECT COUNT(*) AS c FROM ticket t
+        JOIN estado e ON e.id_estado = t.id_estado
+        WHERE e.nombre = 'En proceso'
+    ")->fetch_assoc()['c'] ?? 0);
+
+    $agentesActivos = (int)($conn->query("
+        SELECT COUNT(*) AS c FROM usuario WHERE id_rol = 3 AND activo = 1
+    ")->fetch_assoc()['c'] ?? 0);
+
+    $capacidadPorAgente = 5;
+    $capacidadTotal = max(1, $agentesActivos * $capacidadPorAgente);
+    $capacidadPct = min(100, (int)round(($enProceso / $capacidadTotal) * 100));
+
+    $totalTickets = (int)($conn->query("SELECT COUNT(*) AS c FROM ticket")->fetch_assoc()['c'] ?? 0);
+    $totalCerrados = (int)($conn->query("
+        SELECT COUNT(*) AS c FROM ticket t
+        JOIN estado e ON e.id_estado = t.id_estado
+        WHERE e.nombre = 'Cerrado'
+    ")->fetch_assoc()['c'] ?? 0);
+    $indiceResolucion = $totalTickets > 0 ? (int)round(($totalCerrados / $totalTickets) * 100) : 0;
+
+    $respuestaMediaMin = $conn->query("
+        SELECT AVG(TIMESTAMPDIFF(MINUTE, t.fecha_creacion, primera.fecha_envio)) AS prom
+        FROM ticket t
+        JOIN (
+            SELECT m.id_ticket, MIN(m.fecha_envio) AS fecha_envio
+            FROM mensaje m
+            JOIN usuario u ON u.id_usuario = m.id_usuario
+            WHERE u.id_rol IN (2, 3, 4)
+            GROUP BY m.id_ticket
+        ) AS primera ON primera.id_ticket = t.id_ticket
+    ")->fetch_assoc()['prom'] ?? null;
+    $respuestaMediaTexto = $respuestaMediaMin !== null ? number_format((float)$respuestaMediaMin, 1) : '—';
+
+    $cerradosEsteMes = (int)($conn->query("
+        SELECT COUNT(*) AS c FROM ticket
+        WHERE id_estado IN (SELECT id_estado FROM estado WHERE nombre = 'Cerrado')
+        AND fecha_cierre >= DATE_FORMAT(NOW(), '%Y-%m-01')
+    ")->fetch_assoc()['c'] ?? 0);
+    $cerradosMesPasado = (int)($conn->query("
+        SELECT COUNT(*) AS c FROM ticket
+        WHERE id_estado IN (SELECT id_estado FROM estado WHERE nombre = 'Cerrado')
+        AND fecha_cierre >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01')
+        AND fecha_cierre < DATE_FORMAT(NOW(), '%Y-%m-01')
+    ")->fetch_assoc()['c'] ?? 0);
+    if ($cerradosMesPasado > 0) {
+        $resolutividadDelta = (int)round((($cerradosEsteMes - $cerradosMesPasado) / $cerradosMesPasado) * 100);
+    } else {
+        $resolutividadDelta = $cerradosEsteMes > 0 ? 100 : 0;
+    }
+    $resolutividadTexto = ($resolutividadDelta >= 0 ? '+' : '') . $resolutividadDelta . '%';
+
+    // Requiere la columna usuario.ultimo_acceso (ver migracion_perfil.sql)
+    $agentesOnline = (int)($conn->query("
+        SELECT COUNT(*) AS c FROM usuario
+        WHERE id_rol = 3 AND ultimo_acceso >= DATE_SUB(NOW(), INTERVAL 15 MINUTE)
+    ")->fetch_assoc()['c'] ?? 0);
+
+    $empresasActivas = (int)($conn->query("SELECT COUNT(*) AS c FROM empresa WHERE estado = 1")->fetch_assoc()['c'] ?? 0);
+} catch (\Throwable $e) {
+    // Se mantienen los valores por defecto definidos arriba; la página
+    // pública sigue funcionando aunque falte alguna columna/tabla.
+    error_log('[index.php] estadisticas publicas fallaron: ' . $e->getMessage());
+}
 ?>
 
 <!DOCTYPE html>
@@ -36,9 +136,23 @@ if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=Unbounded:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/transition.css">
   
 </head>
 <body>
+
+<div class="page-transition-overlay" id="pageTransition">
+  <div class="pt-panel pt-panel--l"></div>
+  <div class="pt-panel pt-panel--c">
+    <div class="pt-logo">
+      <img src="img/bar1.png" alt="">
+      <img src="img/bar2.png" alt="">
+      <img src="img/bar3.png" alt="">
+    </div>
+    <p class="pt-wordmark">ServiceCore<span>Corporation</span></p>
+  </div>
+  <div class="pt-panel pt-panel--r"></div>
+</div>
 
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
@@ -85,16 +199,20 @@ if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
 
       <div class="stats-row" id="srow">
         <div class="stat-box">
-          <div class="stat-num" id="s1">98<sub>%</sub></div>
-          <div class="stat-label">Satisfacción del usuario</div>
+          <div class="stat-num" id="s1" data-count="<?php echo $indiceResolucion; ?>"><?php echo $indiceResolucion; ?><sub>%</sub></div>
+          <div class="stat-label">Índice de resolución</div>
         </div>
         <div class="stat-box">
-          <div class="stat-num">&lt;4<sub>min</sub></div>
+          <?php if ($respuestaMediaMin !== null): ?>
+          <div class="stat-num">&lt;<?php echo $respuestaMediaTexto; ?><sub>min</sub></div>
+          <?php else: ?>
+          <div class="stat-num">—</div>
+          <?php endif; ?>
           <div class="stat-label">Primera respuesta</div>
         </div>
         <div class="stat-box">
-          <div class="stat-num">3<sub>x</sub></div>
-          <div class="stat-label">Más resolución en primer contacto</div>
+          <div class="stat-num"><?php echo $agentesActivos; ?><sub>+</sub></div>
+          <div class="stat-label">Agentes en tu equipo</div>
         </div>
       </div>
     </div>
@@ -111,11 +229,11 @@ if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
         <div class="card-wrap cw1" id="cw1">
           <div class="fcard" id="fc1">
             <div class="fcard-tag">Tickets activos</div>
-            <div class="fcard-big">24 abiertos</div>
+            <div class="fcard-big"><?php echo $ticketsActivosTotal; ?> abiertos</div>
             <div class="chips">
-              <span class="chip chip-r">Alta — 8</span>
-              <span class="chip chip-y">Media — 11</span>
-              <span class="chip chip-v">Baja — 5</span>
+              <span class="chip chip-r">Alta — <?php echo $prioridadesActivas['Alta']; ?></span>
+              <span class="chip chip-y">Media — <?php echo $prioridadesActivas['Media']; ?></span>
+              <span class="chip chip-v">Baja — <?php echo $prioridadesActivas['Baja']; ?></span>
             </div>
           </div>
         </div>
@@ -124,11 +242,11 @@ if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
         <div class="card-wrap cw2" id="cw2">
           <div class="fcard" id="fc2">
             <div class="fcard-tag">Cola de soporte</div>
-            <div class="fcard-big">7 en curso</div>
+            <div class="fcard-big"><?php echo $enProceso; ?> en curso</div>
             <div class="bar-track">
-              <div class="bar-fill" id="barfill"></div>
+              <div class="bar-fill" id="barfill" data-pct="<?php echo $capacidadPct; ?>"></div>
             </div>
-            <div class="fcard-sub">65% de capacidad del equipo</div>
+            <div class="fcard-sub"><?php echo $capacidadPct; ?>% de capacidad del equipo</div>
           </div>
         </div>
 
@@ -138,11 +256,11 @@ if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
             <div class="fcard-tag">Resueltos hoy</div>
             <div class="grid2">
               <div class="g2-item">
-                <strong>95%</strong>
+                <strong><?php echo $indiceResolucion; ?>%</strong>
                 <p>Índice de resolución</p>
               </div>
               <div class="g2-item">
-                <strong>3.8<span style="font-size:1.1rem">min</span></strong>
+                <strong><?php echo $respuestaMediaMin !== null ? $respuestaMediaTexto : '—'; ?><span style="font-size:1.1rem">min</span></strong>
                 <p>Respuesta media</p>
               </div>
             </div>
@@ -152,16 +270,16 @@ if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
         <!-- Badges laterales -->
         <div class="side-badges" id="sbadges">
           <div class="sbadge">
-            <strong>+52%</strong>
+            <strong><?php echo $resolutividadTexto; ?></strong>
             <span>Resolutividad</span>
           </div>
           <div class="sbadge">
-            <strong>18</strong>
+            <strong><?php echo $agentesOnline; ?></strong>
             <span>Agentes online</span>
           </div>
           <div class="sbadge">
-            <strong>4.9★</strong>
-            <span>Valoración</span>
+            <strong><?php echo $empresasActivas; ?></strong>
+            <span>Empresas activas</span>
           </div>
         </div>
 
@@ -173,8 +291,6 @@ if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
   <div class="divider"></div>
 <!--Consulta para traer las imagenes de la bd al carrusel-->
   <?php
-    require_once 'conexion.php'; 
-
     $carrusel = [];
     $sql = "SELECT id_carrusel, imagen_url, descripcion, fecha_subida 
             FROM carrusel 
@@ -283,6 +399,25 @@ if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
         ],
     ];
   ?>
+
+  <?php
+    $planes = [];
+    $sqlPlanes = "SELECT id_plan, nombre, precio, limite_usuarios, limite_tickets
+                  FROM plan
+                  WHERE activo = 1
+                  ORDER BY precio ASC";
+    $resultPlanes = $conn->query($sqlPlanes);
+    if ($resultPlanes && $resultPlanes->num_rows > 0) {
+        while ($row = $resultPlanes->fetch_assoc()) {
+            $planes[] = $row;
+        }
+    }
+
+    function formatoQuetzalesIndex($valor) {
+        $valor = (float) $valor;
+        return floor($valor) == $valor ? 'Q' . number_format($valor, 0) : 'Q' . number_format($valor, 2);
+    }
+  ?>
   <!-- GALERIA -->
   <section class="features-section" id="features">
     <div class="section-head" id="feathead">
@@ -315,6 +450,40 @@ if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
         </article>
       <?php endforeach; ?>
     </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="pricing-section" id="planes">
+    <div class="section-head">
+      <span class="section-tag">Planes</span>
+      <h2>Un plan para cada tamaño de equipo.</h2>
+      <p>Empieza con el que se ajuste a tu empresa hoy y crece de plan cuando lo necesites, sin perder historial ni configuración.</p>
+    </div>
+
+    <?php if (!empty($planes)): ?>
+    <div class="price-grid">
+      <?php foreach ($planes as $i => $p):
+        $featured = count($planes) > 2 && $i === intdiv(count($planes), 2);
+      ?>
+        <article class="price-card<?php echo $featured ? ' featured' : ''; ?>">
+          <?php if ($featured): ?><span class="price-badge">Más elegido</span><?php endif; ?>
+          <h3 class="price-name"><?php echo htmlspecialchars($p['nombre']); ?></h3>
+          <div class="price-amount">
+            <?php echo formatoQuetzalesIndex($p['precio']); ?><span>/mes</span>
+          </div>
+          <ul class="price-features">
+            <li><?php echo number_format((int)$p['limite_usuarios']); ?> usuarios</li>
+            <li><?php echo number_format((int)$p['limite_tickets']); ?> tickets al mes</li>
+            <li>Soporte por correo y chat</li>
+          </ul>
+          <a href="registrarse.php" class="price-cta"><?php echo $featured ? 'Empezar ahora' : 'Elegir plan'; ?></a>
+        </article>
+      <?php endforeach; ?>
+    </div>
+    <?php else: ?>
+    <p class="price-empty">Muy pronto vas a poder ver aquí los planes disponibles.</p>
+    <?php endif; ?>
   </section>
 
   <div class="divider"></div>
@@ -365,9 +534,10 @@ if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="js/script.js"></script>   
-<script src="js/block.js"></script> 
-<script src="js/carrusel.js"></script> 
+<script src="js/script.js"></script>
+<script src="js/block.js"></script>
+<script src="js/carrusel.js"></script>
 <script src="js/nav_scroll.js"></script>
+<script src="js/page_transition.js"></script>
 </body>
 </html>
