@@ -24,12 +24,13 @@ body {
   font-family: 'Inter', sans-serif;
   background: #f5f7ff;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  grid-template-rows: auto 1fr;
 }
 
 .contenido {
-  flex: 1;
+  grid-column: 2;
 }
 
 /*scroll*/
