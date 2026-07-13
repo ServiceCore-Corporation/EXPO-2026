@@ -152,7 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         break;
 
                     case 4:
-                        header("Location: dashboard_aprovador.php");
+                        header("Location: dashboard_supervisor.php");
                         break;
 
                     case 5:

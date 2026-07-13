@@ -11,7 +11,7 @@ if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
         case 1: header("Location: vistas/Admin/dashboard_admin.php"); break;
         case 2: header("Location: vistas/Admin_Empresa/dashboard_admin_emp.php"); break;
         case 3: header("Location: vistas/Agente/dashboard_agente.php"); break;
-        case 4: header("Location: vistas/Supervisor/dashboard_aprovador.php"); break;
+        case 4: header("Location: vistas/Supervisor/dashboard_supervisor.php"); break;
         case 5: header("Location: vistas/Cliente/dashboard_cliente.php"); break;
         default:
             session_destroy();

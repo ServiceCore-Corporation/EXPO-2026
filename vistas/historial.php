@@ -15,7 +15,7 @@ function obtenerRutaDashboard($rol)
         case 3:
             return 'Agente/dashboard_agente.php';
         case 4:
-            return 'Supervisor/dashboard_aprovador.php';
+            return 'Supervisor/dashboard_supervisor.php';
         case 5:
             return 'Cliente/dashboard_cliente.php';
         default:

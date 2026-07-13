@@ -60,13 +60,13 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
             <a href="asignacion_tickets.php" class="menu-item">
                 <span class="material-symbols-outlined">assignment_ind</span>Asignación de Tickets
             </a>
-            <a href="#" class="menu-item" title="Próximamente">
+            <a href="usuarios_agentes.php" class="menu-item">
                 <span class="material-symbols-outlined">group</span>Mis Agentes
             </a>
-            <a href="#" class="menu-item" title="Próximamente">
+            <a href="mis_categorias.php" class="menu-item">
                 <span class="material-symbols-outlined">category</span>Mis Categorías
             </a>
-            <a href="../historial.php" class="menu-item">
+            <a href="#" class="menu-item">
                 <span class="material-symbols-outlined">history</span>Historial
             </a>
         </nav>

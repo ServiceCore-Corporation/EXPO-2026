@@ -95,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: vistas/Agente/dashboard_agente.php");
             break;
         case 4:
-            header("Location: vistas/Supervisor/dashboard_aprovador.php");
+            header("Location: vistas/Supervisor/dashboard_supervisor.php");
             break;
         case 5:
             header("Location: vistas/Cliente/dashboard_cliente.php");
