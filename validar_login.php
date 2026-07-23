@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $stmt = $conn->prepare("
-        SELECT id_usuario, nombre, correo, pass, id_rol, activo
+        SELECT id_usuario, nombre, correo, pass, id_rol, activo, foto
         FROM usuario
         WHERE correo = ?
     ");
@@ -68,6 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $_SESSION['nombre']      = $usuario['nombre'];
     $_SESSION['correo']      = $usuario['correo'];
     $_SESSION['id_rol']      = (int)$usuario['id_rol'];
+    $_SESSION['foto']        = $usuario['foto'] ?? '';
     $_SESSION['autenticado'] = true;
 
     try {

@@ -1,6 +1,6 @@
 :root {
-    --primary: #5b50b6;
-    --primary-dark: #241c63;
+    --primary: #5750ad;
+    --primary-dark: #1e1858;
     --primary-soft: #eef1fb;
     --white: #ffffff;
     --bg: #f4f6fd;
@@ -24,9 +24,6 @@ body {
   font-family: 'Inter', sans-serif;
   background: #f5f7ff;
   min-height: 100vh;
-  display: grid;
-  grid-template-columns: var(--sidebar-w) 1fr;
-  grid-template-rows: auto 1fr;
 }
 
 .contenido {
@@ -85,7 +82,7 @@ aside nav::-webkit-scrollbar-thumb:hover {
 
 .sidebar {
     grid-row: 1 / 3;
-    background: #241c63;
+    background: #1e1858;
     color: white;
     padding: 38px 25px;
     height: 100vh;
@@ -162,22 +159,25 @@ aside nav::-webkit-scrollbar-thumb:hover {
 .menu-item {
     display: flex;
     align-items: center;
-    gap: 14px;
-    color: #c9c5ff;
+    gap: 12px;
+    color: #c7c9ff;
     text-decoration: none;
-    padding: 15px 18px;
+    padding: 10px 16px;
     border-radius: 12px;
     font-size: 16px;
     font-weight: 600;
+    transition: .3s;
 }
 
 .menu-item:hover {
     background: rgba(255, 255, 255, .08);
     color: white;
+    transform: translateX(5px);
 }
 
-.menu-item.active {
-    background: #5b50b6;
+.menu-item.active,
+.menu-item.activo {
+    background: #5750ad;
     color: white;
 }
 
@@ -230,7 +230,7 @@ aside nav::-webkit-scrollbar-thumb:hover {
 
 .topbar h2 {
     margin: 0;
-    color: #241c63;
+    color: #1e1858;
     font-size: 22px;
     font-weight: 800;
 }
@@ -238,7 +238,7 @@ aside nav::-webkit-scrollbar-thumb:hover {
 .topbar h2::before {
     content: "☰";
     margin-right: 18px;
-    color: #5b50b6;
+    color: #5750ad;
     font-weight: 400;
 }
 
@@ -401,9 +401,9 @@ aside nav::-webkit-scrollbar-thumb:hover {
     width: 42px;
     height: 42px;
     border-radius: 50%;
-    border: 2px solid #5b50b6;
+    border: 2px solid #5750ad;
     background: white;
-    color: #241c63;
+    color: #1e1858;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -474,7 +474,7 @@ aside nav::-webkit-scrollbar-thumb:hover {
     width: 68px;
     height: 68px;
     border: none;
-    background: #5b50b6;
+    background: #5750ad;
     color: white;
     font-size: 22px !important;
 }
@@ -487,7 +487,7 @@ aside nav::-webkit-scrollbar-thumb:hover {
     align-items: center;
     justify-content: center;
     background: #eef1fb;
-    color: #5b50b6;
+    color: #5750ad;
 }
 
 .summary-icon.green {
@@ -544,7 +544,7 @@ aside nav::-webkit-scrollbar-thumb:hover {
 }
 
 .photo-circle.placeholder {
-    background: #5b50b6;
+    background: #5750ad;
     color: white;
     display: flex;
     align-items: center;
@@ -563,7 +563,7 @@ aside nav::-webkit-scrollbar-thumb:hover {
     height: 32px;
     border-radius: 50%;
     border: 2px solid white;
-    background: #5b50b6;
+    background: #5750ad;
     color: white;
     cursor: pointer;
 }
@@ -621,7 +621,7 @@ aside nav::-webkit-scrollbar-thumb:hover {
 
 .input-icon:focus-within {
     background: white;
-    border-color: #5b50b6;
+    border-color: #5750ad;
     box-shadow: 0 0 0 4px rgba(91, 80, 182, .13);
 }
 
@@ -741,7 +741,7 @@ aside nav::-webkit-scrollbar-thumb:hover {
 .badge-purple,
 .badge-blue {
     background: #eef1fb;
-    color: #5b50b6;
+    color: #5750ad;
 }
 
 .badge-green {
@@ -768,7 +768,7 @@ aside nav::-webkit-scrollbar-thumb:hover {
 }
 
 .timeline-item.primary {
-    border-color: #5b50b6;
+    border-color: #5750ad;
 }
 
 .timeline-item .material-symbols-outlined {
@@ -779,7 +779,7 @@ aside nav::-webkit-scrollbar-thumb:hover {
     align-items: center;
     justify-content: center;
     background: #eef1fb;
-    color: #5b50b6;
+    color: #5750ad;
     font-size: 18px !important;
 }
 
@@ -810,12 +810,12 @@ aside nav::-webkit-scrollbar-thumb:hover {
 }
 
 .btn-primary {
-    background: #5b50b6;
+    background: #5750ad;
     color: white;
 }
 
 .btn-primary:hover {
-    background: #241c63;
+    background: #1e1858;
 }
 
 .btn-dark {
@@ -885,7 +885,7 @@ aside nav::-webkit-scrollbar-thumb:hover {
     margin: 0 auto 14px;
     border-radius: 50%;
     background: #eef1fb;
-    color: #5b50b6;
+    color: #5750ad;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -909,7 +909,7 @@ aside nav::-webkit-scrollbar-thumb:hover {
 
 .toast {
     background: white;
-    border-left: 4px solid #5b50b6;
+    border-left: 4px solid #5750ad;
     padding: 12px 16px;
     border-radius: 10px;
     box-shadow: var(--shadow);
@@ -1017,7 +1017,7 @@ aside nav::-webkit-scrollbar-thumb:hover {
 }
 
 .sidebar {
-    background: #241c63 !important;
+    background: #1e1858 !important;
 }
 
 @media(max-width:900px) {

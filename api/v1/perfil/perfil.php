@@ -261,6 +261,12 @@ if ($metodo === 'POST' && $id === 'foto') {
             responder(500, ["error" => "No se pudo registrar la foto en la base de datos."]);
         }
 
+        // Mantiene la sesión sincronizada: así el Navbar muestra la foto nueva
+        // de inmediato, sin necesidad de cerrar sesión y volver a entrar.
+        if (isset($_SESSION['usuario_id']) && (int)$_SESSION['usuario_id'] === $idUsuario) {
+            $_SESSION['foto'] = $rutaPublica;
+        }
+
         if (!empty($fotoAnterior) && basename($fotoAnterior) !== $nombreArchivo) {
             $rutaAnterior = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..'
                           . DIRECTORY_SEPARATOR . 'vistas' . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $fotoAnterior);

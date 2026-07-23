@@ -275,11 +275,15 @@ if (isset($_GET['ajax'])) {
                 <p class="font-bold"><?= $nombreUsuario ?></p>
                 <p class="text-sm text-gray-500">Administrador</p>
             </div>
-            <div id="botonUsuario" class="w-10 h-10 rounded-full cursor-pointer border-2 border-[#5750ad] bg-[#5750ad] flex items-center justify-center text-white font-bold">
-                <?= mb_strtoupper(mb_substr($_SESSION['nombre'], 0, 1)) ?>
+            <div id="botonUsuario" class="w-10 h-10 rounded-full cursor-pointer border-2 border-[#5750ad] bg-[#5750ad] flex items-center justify-center text-white font-bold overflow-hidden">
+                <?php if (!empty($_SESSION['foto'])): ?>
+                    <img src="../<?= htmlspecialchars($_SESSION['foto']) ?>" alt="Foto de perfil" class="w-full h-full object-cover">
+                <?php else: ?>
+                    <?= mb_strtoupper(mb_substr($_SESSION['nombre'], 0, 1)) ?>
+                <?php endif; ?>
             </div>
             <div id="menuUsuario" class="hidden absolute right-0 top-14 w-52 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50">
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
+                <a href="perfil.php#tarjetaPreferencias" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
                     <span class="material-symbols-outlined text-gray-600">settings</span>Configuración
                 </a>
                 <a href="perfil.php" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
@@ -324,6 +328,13 @@ if (isset($_GET['ajax'])) {
                 <span class="material-symbols-outlined">history</span>Historial y Auditoría
             </a>
         </nav>
+
+        <br><br>
+        <!-- Cerrar sesión -->
+        <a href="../../logout.php"class="mt-auto flex items-center justify-center gap-3 w-full py-3 rounded-xl border-2 border-red-500 text-red-400 font-semibold transition-all duration-300 hover:bg-red-500 hover:text-white hover:shadow-lg">
+            <span class="material-symbols-outlined">logout</span>
+            Cerrar Sesión
+        </a>
     </aside>
 
     <main class="contenido ml-64 pt-24 px-8 pb-10">
@@ -505,6 +516,7 @@ if (isset($_GET['ajax'])) {
                         <th>Empresa</th>
                         <th>Correo de contacto</th>
                         <th>Teléfono</th>
+                        <th>Usuarios</th>
                         <th>Estado</th>
                         <th>Registrada</th>
                         <th class="th-actions">Acciones</th>
@@ -529,10 +541,14 @@ if (isset($_GET['ajax'])) {
                             </td>
                             <td><span data-row-correo><?= htmlspecialchars($e['correo']) ?></span></td>
                             <td><span data-row-telefono><?= htmlspecialchars($e['telefono']) ?></span></td>
+                            <td><span class="badge badge-gray" data-row-usuarios><?= (int)$e['totalUsuarios'] ?></span></td>
                             <td><span class="<?= badgeClassEstado($e['estado']) ?>" data-row-estado-badge><?= htmlspecialchars($e['estado']) ?></span></td>
                             <td><span data-row-fecha><?= htmlspecialchars($e['fecha']) ?></span></td>
                             <td>
                                 <div class="row-actions">
+                                    <button class="row-icon-btn" data-action="ver-empresa" title="Ver información general">
+                                        <span class="material-symbols-outlined">visibility</span>
+                                    </button>
                                     <button class="row-icon-btn" data-action="editar-empresa" title="Editar empresa">
                                         <span class="material-symbols-outlined">edit</span>
                                     </button>
@@ -716,6 +732,47 @@ if (isset($_GET['ajax'])) {
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal: ver información general de la empresa -->
+    <div class="modal" id="modalVerEmpresa">
+        <div class="modal-content modal-wide">
+            <button class="modal-close" id="modalVerEmpresaCerrar">×</button>
+            <div class="modal-icon"><span class="material-symbols-outlined">domain</span></div>
+            <h3 id="verEmpNombre">Empresa</h3>
+            <p class="text-gray-500" id="verEmpSub">Información general</p>
+
+            <div class="ver-empresa-grid" style="text-align:left; display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
+                <div>
+                    <label class="text-sm text-gray-500">Correo de contacto</label>
+                    <p class="font-semibold" id="verEmpCorreo">—</p>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-500">Teléfono</label>
+                    <p class="font-semibold" id="verEmpTelefono">—</p>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-500">Estado</label>
+                    <p class="font-semibold" id="verEmpEstado">—</p>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-500">Registrada</label>
+                    <p class="font-semibold" id="verEmpFecha">—</p>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-500">Usuarios totales</label>
+                    <p class="font-semibold" id="verEmpUsuarios">—</p>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-500">Pagos registrados</label>
+                    <p class="font-semibold" id="verEmpPagos">—</p>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-light" id="btnCerrarVerEmpresa">Cerrar</button>
+            </div>
         </div>
     </div>
 

@@ -6,25 +6,24 @@
     const $all = (sel) => document.querySelectorAll(sel);
 
     const ACCENTS = {
-        'Administrador': 'purple',
+        'Admin Empresa': 'purple',
         'Supervisor': 'blue',
         'Agente': 'green',
         'Cliente': 'gray',
     };
-    const ICONS = {
-        'Administrador': 'shield_person',
-        'Supervisor': 'supervisor_account',
-        'Agente': 'support_agent',
-        'Cliente': 'person',
-    };
     const BADGE_ROL = {
-        'Administrador': 'badge badge-purple',
+        'Admin Empresa': 'badge badge-purple',
         'Supervisor': 'badge badge-blue',
         'Agente': 'badge badge-green',
         'Cliente': 'badge badge-gray',
     };
-
-    let nextIdSeq = 100;
+    const ID_ROL = {
+        'Admin Empresa': 2,
+        'Supervisor': 4,
+        'Agente': 3,
+        'Cliente': 5,
+    };
+    const NOMBRE_ROL = { 2: 'Admin Empresa', 4: 'Supervisor', 3: 'Agente', 5: 'Cliente' };
 
     /* ---------- Toast ---------- */
     function showToast(type, title, message) {
@@ -42,6 +41,18 @@
             toast.classList.add('fade-out');
             setTimeout(() => toast.remove(), 200);
         }, 4000);
+    }
+
+    /* ---------- Menú de usuario (header) ---------- */
+    const botonUsuario = $('#botonUsuario');
+    const menuUsuario = $('#menuUsuario');
+    if (botonUsuario && menuUsuario) {
+        botonUsuario.addEventListener('click', () => menuUsuario.classList.toggle('hidden'));
+        document.addEventListener('click', (e) => {
+            if (!botonUsuario.contains(e.target) && !menuUsuario.contains(e.target)) {
+                menuUsuario.classList.add('hidden');
+            }
+        });
     }
 
     /* ---------- Sidebar móvil ---------- */
@@ -125,7 +136,7 @@
     /* ---------- KPIs / contadores ---------- */
     function recalcularContadores() {
         let total = 0, activos = 0;
-        const porRol = { 'Administrador': 0, 'Supervisor': 0, 'Agente': 0, 'Cliente': 0 };
+        const porRol = { 'Admin Empresa': 0, 'Supervisor': 0, 'Agente': 0, 'Cliente': 0 };
 
         $all('.user-card').forEach((card) => {
             total++;
@@ -152,10 +163,11 @@
     let cardEnEdicion = null;
 
     function limpiarErroresUsuario() {
-        $('#errorUsuarioNombre').textContent = '';
-        $('#errorUsuarioCorreo').textContent = '';
-        $('#usuarioNombre').closest('.input-icon').classList.remove('invalid');
-        $('#usuarioCorreo').closest('.input-icon').classList.remove('invalid');
+        ['Nombre', 'Correo', 'Password'].forEach((campo) => {
+            const err = $('#errorUsuario' + campo);
+            if (err) err.textContent = '';
+            $('#usuario' + campo)?.closest('.input-icon')?.classList.remove('invalid');
+        });
     }
 
     function abrirModalNuevo() {
@@ -166,6 +178,8 @@
         $('#btnGuardarUsuario').innerHTML = '<span class="material-symbols-outlined">save</span> Guardar Usuario';
         formUsuario.reset();
         $('#usuarioId').value = '';
+        $('#grupoUsuarioPassword').style.display = '';
+        $('#usuarioPassword').setAttribute('required', 'required');
         limpiarErroresUsuario();
         modalUsuario.classList.add('open');
     }
@@ -181,8 +195,12 @@
         $('#usuarioNombre').value = card.dataset.nombre;
         $('#usuarioCorreo').value = card.dataset.correo;
         $('#usuarioDetalle').value = card.dataset.detalle;
-        $('#usuarioRol').value = card.dataset.rol;
+        $('#usuarioRol').value = ID_ROL[card.dataset.rol];
         $('#usuarioEstado').value = card.dataset.estado;
+
+        $('#grupoUsuarioPassword').style.display = 'none';
+        $('#usuarioPassword').removeAttribute('required');
+        $('#usuarioPassword').value = '';
 
         limpiarErroresUsuario();
         modalUsuario.classList.add('open');
@@ -200,6 +218,12 @@
 
     function inicialesDe(nombre) {
         return nombre.trim().split(' ').slice(0, 2).map((p) => p[0] || '').join('').toUpperCase();
+    }
+
+    function fechaHoyUR() {
+        const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+        const d = new Date();
+        return `${String(d.getDate()).padStart(2, '0')} ${meses[d.getMonth()]} ${d.getFullYear()}`;
     }
 
     function crearElementoCard(data) {
@@ -223,8 +247,8 @@
             </div>
             <p class="user-card-detalle" data-card-detalle>${data.detalle || '—'}</p>
             <div class="user-card-badges">
-                <span class="${BADGE_ROL[data.rol]}" data-card-estado-badge>${data.estado}</span>
-                <small data-card-fecha>Desde hoy</small>
+                <span class="${data.estado === 'Activo' ? 'badge badge-green' : 'badge badge-gray'}" data-card-estado-badge>${data.estado}</span>
+                <small data-card-fecha>Desde ${fechaHoyUR()}</small>
             </div>
             <div class="user-card-actions">
                 <button class="card-icon-btn" data-action="editar" title="Editar usuario">
@@ -247,14 +271,23 @@
         badge.className = card.dataset.estado === 'Activo' ? 'badge badge-green' : 'badge badge-gray';
     }
 
-    formUsuario.addEventListener('submit', function (e) {
+    function existeCorreoDuplicadoUR(correo, idExcluir) {
+        return Array.from($all('.user-card')).some(
+            (card) => card.dataset.correo.toLowerCase() === correo.toLowerCase() && card.dataset.id !== idExcluir
+        );
+    }
+
+    formUsuario.addEventListener('submit', async function (e) {
         e.preventDefault();
         limpiarErroresUsuario();
 
+        const id = $('#usuarioId').value;
         const nombre = $('#usuarioNombre').value.trim();
         const correo = $('#usuarioCorreo').value.trim();
+        const password = $('#usuarioPassword').value;
         const detalle = $('#usuarioDetalle').value.trim();
-        const rol = $('#usuarioRol').value;
+        const idRol = $('#usuarioRol').value;
+        const rolNombre = NOMBRE_ROL[idRol];
         const estado = $('#usuarioEstado').value;
 
         let valido = true;
@@ -268,48 +301,78 @@
             $('#usuarioCorreo').closest('.input-icon').classList.add('invalid');
             $('#errorUsuarioCorreo').textContent = 'Ingresa un correo electrónico válido.';
             valido = false;
+        } else if (existeCorreoDuplicadoUR(correo, id)) {
+            $('#usuarioCorreo').closest('.input-icon').classList.add('invalid');
+            $('#errorUsuarioCorreo').textContent = 'Ya existe un usuario con este correo.';
+            valido = false;
+        }
+        if (!modoEdicion && (!password || password.length < 8)) {
+            $('#usuarioPassword').closest('.input-icon').classList.add('invalid');
+            $('#errorUsuarioPassword').textContent = 'La contraseña debe tener al menos 8 caracteres.';
+            valido = false;
         }
         if (!valido) return;
 
-        if (modoEdicion && cardEnEdicion) {
-            const rolAnterior = cardEnEdicion.dataset.rol;
+        const btnGuardar = $('#btnGuardarUsuario');
+        const textoOriginal = btnGuardar.innerHTML;
+        btnGuardar.disabled = true;
 
-            cardEnEdicion.dataset.nombre = nombre;
-            cardEnEdicion.dataset.correo = correo;
-            cardEnEdicion.dataset.detalle = detalle;
-            cardEnEdicion.dataset.rol = rol;
-            cardEnEdicion.dataset.estado = estado;
+        try {
+            const fd = new FormData();
+            fd.append('accion', modoEdicion ? 'editar' : 'crear');
+            if (modoEdicion) fd.append('id', id);
+            fd.append('nombre', nombre);
+            fd.append('correo', correo);
+            fd.append('detalle', detalle);
+            fd.append('id_rol', idRol);
+            fd.append('estado', estado);
+            if (!modoEdicion) fd.append('password', password);
 
-            cardEnEdicion.querySelector('[data-card-nombre]').textContent = nombre;
-            cardEnEdicion.querySelector('[data-card-correo]').textContent = correo;
-            cardEnEdicion.querySelector('[data-card-detalle]').textContent = detalle || '—';
-            actualizarBadgeEstadoCard(cardEnEdicion);
+            const res = await fetch('gestion_usuarios.php?ajax=1', { method: 'POST', body: fd });
+            const data = await res.json();
+            if (!data.ok) throw new Error(data.mensaje || 'No se pudo guardar el usuario.');
 
-            const avatar = cardEnEdicion.querySelector('.avatar');
-            avatar.textContent = inicialesDe(nombre);
-            avatar.className = `avatar small accent-${ACCENTS[rol] || 'gray'}`;
+            if (modoEdicion && cardEnEdicion) {
+                const rolAnterior = cardEnEdicion.dataset.rol;
 
-            if (rol !== rolAnterior) {
-                const nuevoBody = document.querySelector(`[data-role-body="${rol}"]`);
-                nuevoBody.insertBefore(cardEnEdicion, nuevoBody.querySelector('[data-empty-column]'));
-                showToast('success', 'Rol actualizado', `${nombre} se movió de ${rolAnterior} a ${rol}.`);
+                cardEnEdicion.dataset.nombre = nombre;
+                cardEnEdicion.dataset.correo = correo;
+                cardEnEdicion.dataset.detalle = detalle;
+                cardEnEdicion.dataset.rol = rolNombre;
+                cardEnEdicion.dataset.estado = estado;
+
+                cardEnEdicion.querySelector('[data-card-nombre]').textContent = nombre;
+                cardEnEdicion.querySelector('[data-card-correo]').textContent = correo;
+                cardEnEdicion.querySelector('[data-card-detalle]').textContent = detalle || '—';
+                actualizarBadgeEstadoCard(cardEnEdicion);
+
+                const avatar = cardEnEdicion.querySelector('.avatar');
+                avatar.textContent = inicialesDe(nombre);
+                avatar.className = `avatar small accent-${ACCENTS[rolNombre] || 'gray'}`;
+
+                if (rolNombre !== rolAnterior) {
+                    const nuevoBody = document.querySelector(`[data-role-body="${rolNombre}"]`);
+                    nuevoBody.insertBefore(cardEnEdicion, nuevoBody.querySelector('[data-empty-column]'));
+                    showToast('success', 'Rol actualizado', `${nombre} se movió de ${rolAnterior} a ${rolNombre}.`);
+                } else {
+                    showToast('success', 'Usuario actualizado', `Los datos de ${nombre} se guardaron correctamente.`);
+                }
             } else {
-                showToast('success', 'Usuario actualizado', `Los datos de ${nombre} se guardaron correctamente.`);
+                const nuevaCard = crearElementoCard({ id: data.id, nombre, correo, detalle, rol: rolNombre, estado });
+                const body = document.querySelector(`[data-role-body="${rolNombre}"]`);
+                body.insertBefore(nuevaCard, body.querySelector('[data-empty-column]'));
+                showToast('success', 'Usuario creado', `${nombre} se agregó como ${rolNombre}.`);
             }
-        } else {
-            nextIdSeq++;
-            const nuevoId = `USR-${String(nextIdSeq).padStart(3, '0')}`;
-            const nuevaCard = crearElementoCard({ id: nuevoId, nombre, correo, detalle, rol, estado });
 
-            const body = document.querySelector(`[data-role-body="${rol}"]`);
-            body.insertBefore(nuevaCard, body.querySelector('[data-empty-column]'));
-
-            showToast('success', 'Usuario creado', `${nombre} se agregó como ${rol}.`);
+            recalcularContadores();
+            aplicarFiltroRolYBusqueda();
+            cerrarModalUsuario();
+        } catch (error) {
+            showToast('error', 'Error', error.message || 'No se pudo guardar el usuario.');
+        } finally {
+            btnGuardar.disabled = false;
+            btnGuardar.innerHTML = textoOriginal;
         }
-
-        recalcularContadores();
-        aplicarFiltroRolYBusqueda();
-        cerrarModalUsuario();
     });
 
     /* ---------- Acciones sobre cada card (editar / toggle estado / eliminar) ---------- */
@@ -327,22 +390,51 @@
 
         if (accion === 'toggle-estado') {
             const nuevoEstado = card.dataset.estado === 'Activo' ? 'Inactivo' : 'Activo';
-            card.dataset.estado = nuevoEstado;
-            actualizarBadgeEstadoCard(card);
-            recalcularContadores();
-            aplicarFiltroRolYBusqueda();
-            showToast('info', 'Estado actualizado', `${nombre} ahora está ${nuevoEstado.toLowerCase()}.`);
+            openConfirm(
+                nuevoEstado === 'Activo' ? 'Activar Usuario' : 'Desactivar Usuario',
+                `¿Seguro que deseas ${nuevoEstado === 'Activo' ? 'activar' : 'desactivar'} a ${nombre}?`,
+                async () => {
+                    try {
+                        const fd = new FormData();
+                        fd.append('accion', 'toggle-estado');
+                        fd.append('id', card.dataset.id);
+                        fd.append('activo', nuevoEstado === 'Activo' ? '1' : '0');
+                        const res = await fetch('gestion_usuarios.php?ajax=1', { method: 'POST', body: fd });
+                        const data = await res.json();
+                        if (!data.ok) throw new Error(data.mensaje || 'No se pudo actualizar el estado.');
+
+                        card.dataset.estado = nuevoEstado;
+                        actualizarBadgeEstadoCard(card);
+                        recalcularContadores();
+                        aplicarFiltroRolYBusqueda();
+                        showToast('info', 'Estado actualizado', `${nombre} ahora está ${nuevoEstado.toLowerCase()}.`);
+                    } catch (error) {
+                        showToast('error', 'Error', error.message || 'No se pudo actualizar el estado.');
+                    }
+                }
+            );
         }
 
         if (accion === 'eliminar') {
             openConfirm(
                 'Eliminar usuario',
                 `¿Seguro que deseas eliminar a ${nombre} del sistema? Esta acción no se puede deshacer.`,
-                () => {
-                    card.remove();
-                    recalcularContadores();
-                    aplicarFiltroRolYBusqueda();
-                    showToast('success', 'Usuario eliminado', `${nombre} fue eliminado correctamente.`);
+                async () => {
+                    try {
+                        const fd = new FormData();
+                        fd.append('accion', 'eliminar');
+                        fd.append('id', card.dataset.id);
+                        const res = await fetch('gestion_usuarios.php?ajax=1', { method: 'POST', body: fd });
+                        const data = await res.json();
+                        if (!data.ok) throw new Error(data.mensaje || 'No se pudo eliminar el usuario.');
+
+                        card.remove();
+                        recalcularContadores();
+                        aplicarFiltroRolYBusqueda();
+                        showToast('success', 'Usuario eliminado', `${nombre} fue eliminado correctamente.`);
+                    } catch (error) {
+                        showToast('error', 'Error', error.message || 'No se pudo eliminar el usuario.');
+                    }
                 }
             );
         }

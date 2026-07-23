@@ -30,8 +30,12 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
                 <p class="font-bold"><?= $nombreUsuario ?></p>
                 <p class="text-sm text-gray-500">Supervisor</p>
             </div>
-            <div id="botonUsuario" class="w-10 h-10 rounded-full cursor-pointer border-2 border-[#5750ad] bg-[#5750ad] flex items-center justify-center text-white font-bold">
-                <?= mb_strtoupper(mb_substr($_SESSION['nombre'], 0, 1)) ?>
+            <div id="botonUsuario" class="w-10 h-10 rounded-full cursor-pointer border-2 border-[#5750ad] bg-[#5750ad] flex items-center justify-center text-white font-bold overflow-hidden">
+                <?php if (!empty($_SESSION['foto'])): ?>
+                    <img src="../<?= htmlspecialchars($_SESSION['foto']) ?>" alt="Foto de perfil" class="w-full h-full object-cover">
+                <?php else: ?>
+                    <?= mb_strtoupper(mb_substr($_SESSION['nombre'], 0, 1)) ?>
+                <?php endif; ?>
             </div>
             <div id="menuUsuario" class="hidden absolute right-0 top-14 w-52 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50">
                 <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
@@ -66,7 +70,7 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
             <a href="#" class="menu-item">
                 <span class="material-symbols-outlined">group</span>Usuarios
             </a>
-            <a href="#" class="menu-item">
+            <a href="../historial.php" class="menu-item">
                 <span class="material-symbols-outlined">history</span>Historial
             </a>
             <a href="#" class="menu-item">

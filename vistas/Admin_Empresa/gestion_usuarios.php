@@ -1,52 +1,29 @@
 <?php
 define('ROL_REQUERIDO', 2);
 require_once '../../seguridad.php';
+require_once '../../conexion.php';
 $nombreUsuario = htmlspecialchars($_SESSION['nombre']);
 $correoUsuario = htmlspecialchars($_SESSION['correo']);
+$idUsuarioActual = (int)$_SESSION['usuario_id'];
 
+// Empresa del Admin de Empresa autenticado: todo lo que administra esta
+// vista pertenece siempre a su propia empresa (multi-tenant).
+$idEmpresa = 0;
+$stmtEmp = $conn->prepare("SELECT id_empresa FROM usuario WHERE id_usuario = ? LIMIT 1");
+$stmtEmp->bind_param('i', $idUsuarioActual);
+$stmtEmp->execute();
+$rowEmp = $stmtEmp->get_result()->fetch_assoc();
+$stmtEmp->close();
+if ($rowEmp) $idEmpresa = (int)$rowEmp['id_empresa'];
+
+// Roles administrables por un Admin de Empresa dentro de su propia empresa.
+// El rol 1 (Admin ServiceCore) es a nivel de sistema y no se gestiona aquí.
 $rolesConfig = [
-    'Administrador' => ['icon' => 'shield_person',      'badge' => 'badge-purple', 'accent' => 'purple'],
-    'Supervisor'    => ['icon' => 'supervisor_account',  'badge' => 'badge-blue',   'accent' => 'blue'],
-    'Agente'        => ['icon' => 'support_agent',       'badge' => 'badge-green',  'accent' => 'green'],
-    'Cliente'       => ['icon' => 'person',               'badge' => 'badge-gray',   'accent' => 'gray'],
+    'Admin Empresa' => ['id_rol' => 2, 'icon' => 'shield_person',      'badge' => 'badge-purple', 'accent' => 'purple'],
+    'Supervisor'     => ['id_rol' => 4, 'icon' => 'supervisor_account', 'badge' => 'badge-blue',   'accent' => 'blue'],
+    'Agente'         => ['id_rol' => 3, 'icon' => 'support_agent',      'badge' => 'badge-green',  'accent' => 'green'],
+    'Cliente'        => ['id_rol' => 5, 'icon' => 'person',             'badge' => 'badge-gray',   'accent' => 'gray'],
 ];
-
-$usuariosTodos = [
-    ['id' => 'USR-001', 'nombre' => 'Alex Rivera',          'correo' => 'alex.rivera@servicecore.com',      'rol' => 'Administrador', 'estado' => 'Activo',   'detalle' => 'Tecnología',                  'fecha' => '14 feb 2024'],
-    ['id' => 'USR-002', 'nombre' => 'Daniela Castillo',      'correo' => 'daniela.castillo@servicecore.com', 'rol' => 'Administrador', 'estado' => 'Activo',   'detalle' => 'Operaciones',                 'fecha' => '02 ene 2023'],
-    ['id' => 'USR-010', 'nombre' => 'Alejandro Méndez',      'correo' => 'alejandro.m@servicecore.com',      'rol' => 'Supervisor',    'estado' => 'Activo',   'detalle' => 'Infraestructura, Accesos',    'fecha' => '19 may 2023'],
-    ['id' => 'USR-011', 'nombre' => 'Patricia Domínguez',    'correo' => 'patricia.d@servicecore.com',       'rol' => 'Supervisor',    'estado' => 'Activo',   'detalle' => 'Software, Soporte General',   'fecha' => '30 ago 2023'],
-    ['id' => 'USR-012', 'nombre' => 'Jorge Salazar',         'correo' => 'jorge.salazar@servicecore.com',    'rol' => 'Supervisor',    'estado' => 'Inactivo', 'detalle' => 'Hardware',                    'fecha' => '11 nov 2022'],
-    ['id' => 'USR-020', 'nombre' => 'Luis García',           'correo' => 'luis.garcia@servicecore.com',      'rol' => 'Agente',        'estado' => 'Activo',   'detalle' => 'Infraestructura',             'fecha' => '05 mar 2024'],
-    ['id' => 'USR-021', 'nombre' => 'María López',           'correo' => 'maria.lopez@servicecore.com',      'rol' => 'Agente',        'estado' => 'Activo',   'detalle' => 'Accesos, Infraestructura',    'fecha' => '18 abr 2024'],
-    ['id' => 'USR-022', 'nombre' => 'Carlos Ruiz',           'correo' => 'carlos.ruiz@servicecore.com',      'rol' => 'Agente',        'estado' => 'Activo',   'detalle' => 'Software',                    'fecha' => '22 jun 2024'],
-    ['id' => 'USR-023', 'nombre' => 'Sofía Ramírez',         'correo' => 'sofia.ramirez@servicecore.com',    'rol' => 'Agente',        'estado' => 'Inactivo', 'detalle' => 'Accesos',                     'fecha' => '09 sep 2023'],
-    ['id' => 'USR-024', 'nombre' => 'Pedro Sánchez',         'correo' => 'pedro.sanchez@servicecore.com',    'rol' => 'Agente',        'estado' => 'Activo',   'detalle' => 'Soporte General',             'fecha' => '14 oct 2024'],
-    ['id' => 'USR-030', 'nombre' => 'Roberto Sánchez',       'correo' => 'roberto.sanchez@clientecorp.com',  'rol' => 'Cliente',       'estado' => 'Activo',   'detalle' => 'Cliente Corp',                'fecha' => '01 feb 2025'],
-    ['id' => 'USR-031', 'nombre' => 'Ana Gómez',             'correo' => 'ana.gomez@bancacentral.com',       'rol' => 'Cliente',       'estado' => 'Activo',   'detalle' => 'Banca Central',               'fecha' => '15 mar 2025'],
-    ['id' => 'USR-032', 'nombre' => 'Elena Rodríguez',       'correo' => 'elena.rodriguez@xyz.com',          'rol' => 'Cliente',       'estado' => 'Inactivo', 'detalle' => 'Empresa XYZ',                 'fecha' => '20 dic 2024'],
-];
-
-$usuariosPorRol = [];
-foreach (array_keys($rolesConfig) as $rolNombre) {
-    $usuariosPorRol[$rolNombre] = array_values(array_filter(
-        $usuariosTodos,
-        fn($u) => $u['rol'] === $rolNombre
-    ));
-}
-
-$kpiTotal    = count($usuariosTodos);
-$kpiActivos  = count(array_filter($usuariosTodos, fn($u) => $u['estado'] === 'Activo'));
-$kpiInactivos = $kpiTotal - $kpiActivos;
-
-function badgeClassRoles($text) {
-    $map = [
-        'Activo' => 'badge badge-green', 'Inactivo' => 'badge badge-gray',
-        'Administrador' => 'badge badge-purple', 'Supervisor' => 'badge badge-blue',
-        'Agente' => 'badge badge-green', 'Cliente' => 'badge badge-gray',
-    ];
-    return $map[$text] ?? 'badge badge-gray';
-}
 
 function inicialesRoles($nombre) {
     $partes = explode(' ', trim($nombre));
@@ -54,6 +31,176 @@ function inicialesRoles($nombre) {
     foreach (array_slice($partes, 0, 2) as $p) { $ini .= mb_substr($p, 0, 1); }
     return mb_strtoupper($ini);
 }
+
+function badgeClassRoles($text) {
+    $map = [
+        'Activo' => 'badge badge-green', 'Inactivo' => 'badge badge-gray',
+        'Admin Empresa' => 'badge badge-purple', 'Supervisor' => 'badge badge-blue',
+        'Agente' => 'badge badge-green', 'Cliente' => 'badge badge-gray',
+    ];
+    return $map[$text] ?? 'badge badge-gray';
+}
+
+function plural($rolNombre) {
+    $map = [
+        'Admin Empresa' => 'Admins de Empresa',
+        'Supervisor'    => 'Supervisores',
+        'Agente'        => 'Agentes',
+        'Cliente'       => 'Clientes',
+    ];
+    return $map[$rolNombre] ?? ($rolNombre . 's');
+}
+
+// ---- AJAX: CRUD real de usuarios de la empresa ----
+if (isset($_GET['ajax'])) {
+    header('Content-Type: application/json; charset=utf-8');
+    $accion = $_POST['accion'] ?? $_GET['accion'] ?? '';
+    $rolesPermitidos = array_column($rolesConfig, 'id_rol');
+
+    function responderUR($ok, $data = []) {
+        echo json_encode(array_merge(['ok' => $ok], $data));
+        exit;
+    }
+
+    switch ($accion) {
+        case 'crear':
+            $nombre   = trim($_POST['nombre'] ?? '');
+            $correo   = trim($_POST['correo'] ?? '');
+            $telefono = trim($_POST['telefono'] ?? '');
+            $detalle  = trim($_POST['detalle'] ?? '');
+            $idRol    = (int)($_POST['id_rol'] ?? 0);
+            $password = trim($_POST['password'] ?? '');
+            $activo   = ($_POST['estado'] ?? 'Activo') === 'Activo' ? 1 : 0;
+
+            if ($nombre === '' || $correo === '' || !in_array($idRol, $rolesPermitidos, true)) {
+                responderUR(false, ['mensaje' => 'Nombre, correo y rol son obligatorios.']);
+            }
+            if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+                responderUR(false, ['mensaje' => 'El correo no es válido.']);
+            }
+            if ($password === '' || strlen($password) < 8) {
+                responderUR(false, ['mensaje' => 'La contraseña debe tener al menos 8 caracteres.']);
+            }
+
+            $stmtChk = $conn->prepare("SELECT id_usuario FROM usuario WHERE correo = ? LIMIT 1");
+            $stmtChk->bind_param('s', $correo);
+            $stmtChk->execute();
+            if ($stmtChk->get_result()->fetch_assoc()) {
+                responderUR(false, ['mensaje' => 'Ya existe un usuario con ese correo.']);
+            }
+
+            $hash = password_hash($password, PASSWORD_BCRYPT);
+            $stmt = $conn->prepare("
+                INSERT INTO usuario (nombre, telefono, departamento, correo, pass, id_rol, activo, fecha_creacion, id_empresa)
+                VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?)
+            ");
+            $stmt->bind_param('sssssiii', $nombre, $telefono, $detalle, $correo, $hash, $idRol, $activo, $idEmpresa);
+            $ok = $stmt->execute();
+            responderUR($ok, ['mensaje' => 'Usuario creado correctamente.', 'id' => $conn->insert_id]);
+            break;
+
+        case 'editar':
+            $id       = (int)($_POST['id'] ?? 0);
+            $nombre   = trim($_POST['nombre'] ?? '');
+            $correo   = trim($_POST['correo'] ?? '');
+            $telefono = trim($_POST['telefono'] ?? '');
+            $detalle  = trim($_POST['detalle'] ?? '');
+            $idRol    = (int)($_POST['id_rol'] ?? 0);
+            $activo   = ($_POST['estado'] ?? 'Activo') === 'Activo' ? 1 : 0;
+
+            if ($id <= 0 || $nombre === '' || $correo === '' || !in_array($idRol, $rolesPermitidos, true)) {
+                responderUR(false, ['mensaje' => 'Nombre, correo y rol son obligatorios.']);
+            }
+            if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+                responderUR(false, ['mensaje' => 'El correo no es válido.']);
+            }
+
+            $stmtChk = $conn->prepare("SELECT id_usuario FROM usuario WHERE correo = ? AND id_usuario != ? LIMIT 1");
+            $stmtChk->bind_param('si', $correo, $id);
+            $stmtChk->execute();
+            if ($stmtChk->get_result()->fetch_assoc()) {
+                responderUR(false, ['mensaje' => 'Ya existe otro usuario con ese correo.']);
+            }
+
+            $stmt = $conn->prepare("
+                UPDATE usuario SET nombre = ?, correo = ?, telefono = ?, departamento = ?, id_rol = ?, activo = ?
+                WHERE id_usuario = ? AND id_empresa = ? AND id_rol IN (2,3,4,5)
+            ");
+            $stmt->bind_param('ssssiiii', $nombre, $correo, $telefono, $detalle, $idRol, $activo, $id, $idEmpresa);
+            $ok = $stmt->execute();
+            responderUR($ok, ['mensaje' => 'Usuario actualizado correctamente.']);
+            break;
+
+        case 'toggle-estado':
+            $id     = (int)($_POST['id'] ?? 0);
+            $activo = (int)($_POST['activo'] ?? 0);
+            if ($id <= 0) responderUR(false, ['mensaje' => 'ID inválido.']);
+            if ($id === $idUsuarioActual) responderUR(false, ['mensaje' => 'No puedes desactivar tu propia cuenta.']);
+            $stmt = $conn->prepare("UPDATE usuario SET activo = ? WHERE id_usuario = ? AND id_empresa = ?");
+            $stmt->bind_param('iii', $activo, $id, $idEmpresa);
+            $ok = $stmt->execute();
+            responderUR($ok, ['mensaje' => 'Estado actualizado correctamente.']);
+            break;
+
+        case 'eliminar':
+            $id = (int)($_POST['id'] ?? 0);
+            if ($id <= 0) responderUR(false, ['mensaje' => 'ID inválido.']);
+            if ($id === $idUsuarioActual) responderUR(false, ['mensaje' => 'No puedes eliminar tu propia cuenta.']);
+
+            $stmtChk = $conn->prepare("SELECT COUNT(*) AS c FROM ticket WHERE id_usuario_cliente = ? OR id_usuario_agente = ?");
+            $stmtChk->bind_param('ii', $id, $id);
+            $stmtChk->execute();
+            $enUso = (int)$stmtChk->get_result()->fetch_assoc()['c'];
+            if ($enUso > 0) {
+                responderUR(false, ['mensaje' => "No se puede eliminar: tiene $enUso ticket(s) asociados. Desactívalo en su lugar."]);
+            }
+
+            $stmt = $conn->prepare("DELETE FROM usuario WHERE id_usuario = ? AND id_empresa = ? AND id_rol IN (2,3,4,5)");
+            $stmt->bind_param('ii', $id, $idEmpresa);
+            $ok = $stmt->execute();
+            responderUR($ok, ['mensaje' => 'Usuario eliminado correctamente.']);
+            break;
+
+        default:
+            responderUR(false, ['mensaje' => 'Acción no reconocida.']);
+    }
+}
+
+// ---- Carga real de usuarios de la empresa, agrupados por rol ----
+$usuariosPorRol = array_fill_keys(array_keys($rolesConfig), []);
+$stmt = $conn->prepare("
+    SELECT u.id_usuario, u.nombre, u.correo, u.telefono, u.departamento, u.cargo, u.activo, u.fecha_creacion, r.nombre AS rol
+    FROM usuario u
+    JOIN rol r ON r.id_rol = u.id_rol
+    WHERE u.id_empresa = ? AND u.id_rol IN (2,3,4,5)
+    ORDER BY u.fecha_creacion DESC
+");
+$stmt->bind_param('i', $idEmpresa);
+$stmt->execute();
+$res = $stmt->get_result();
+while ($row = $res->fetch_assoc()) {
+    $detalle = trim(($row['departamento'] ?? '') . (!empty($row['cargo']) ? ' · ' . $row['cargo'] : ''));
+    $u = [
+        'id'      => (int)$row['id_usuario'],
+        'nombre'  => $row['nombre'],
+        'correo'  => $row['correo'],
+        'rol'     => $row['rol'],
+        'estado'  => ((int)$row['activo'] === 1) ? 'Activo' : 'Inactivo',
+        'detalle' => $detalle !== '' ? $detalle : ($row['telefono'] ?: '—'),
+        'telefono'=> $row['telefono'] ?? '',
+        'fecha'   => !empty($row['fecha_creacion']) && $row['fecha_creacion'] !== '0000-00-00 00:00:00'
+                        ? date('d M Y', strtotime($row['fecha_creacion'])) : '—',
+    ];
+    if (isset($usuariosPorRol[$row['rol']])) {
+        $usuariosPorRol[$row['rol']][] = $u;
+    }
+}
+$stmt->close();
+
+$usuariosTodos = array_merge(...array_values($usuariosPorRol));
+$kpiTotal    = count($usuariosTodos);
+$kpiActivos  = count(array_filter($usuariosTodos, fn($u) => $u['estado'] === 'Activo'));
+$kpiInactivos = $kpiTotal - $kpiActivos;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -80,11 +227,15 @@ function inicialesRoles($nombre) {
                 <p class="font-bold"><?= $nombreUsuario ?></p>
                 <p class="text-sm text-gray-500">Admin Empresa</p>
             </div>
-            <div id="botonUsuario" class="w-10 h-10 rounded-full cursor-pointer border-2 border-[#5750ad] bg-[#5750ad] flex items-center justify-center text-white font-bold">
-                <?= mb_strtoupper(mb_substr($_SESSION['nombre'], 0, 1)) ?>
+            <div id="botonUsuario" class="w-10 h-10 rounded-full cursor-pointer border-2 border-[#5750ad] bg-[#5750ad] flex items-center justify-center text-white font-bold overflow-hidden">
+                <?php if (!empty($_SESSION['foto'])): ?>
+                    <img src="../<?= htmlspecialchars($_SESSION['foto']) ?>" alt="Foto de perfil" class="w-full h-full object-cover">
+                <?php else: ?>
+                    <?= mb_strtoupper(mb_substr($_SESSION['nombre'], 0, 1)) ?>
+                <?php endif; ?>
             </div>
             <div id="menuUsuario" class="hidden absolute right-0 top-14 w-52 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50">
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
+                <a href="perfil.php#tarjetaPreferencias" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
                     <span class="material-symbols-outlined text-gray-600">settings</span>Configuración
                 </a>
                 <a href="perfil.php" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
@@ -116,7 +267,13 @@ function inicialesRoles($nombre) {
             <a href="asignar_categoria.php" class="menu-item">
                 <span class="material-symbols-outlined">sell</span>Asignar Categoría
             </a>
-            <a href="#" class="menu-item">
+            <a href="gestion_tickets.php" class="menu-item">
+                <span class="material-symbols-outlined">confirmation_number</span>Gestión de Tickets
+            </a>
+            <a href="reportes.php" class="menu-item">
+                <span class="material-symbols-outlined">insights</span>Reportes
+            </a>
+            <a href="../historial.php" class="menu-item">
                 <span class="material-symbols-outlined">history</span>Historial
             </a>
             
@@ -155,7 +312,7 @@ function inicialesRoles($nombre) {
                 <article class="card kpi <?= $cfg['accent'] ?> kpi-clickable" data-filter-rol="<?= htmlspecialchars($rolNombre) ?>">
                     <div class="kpi-icon"><span class="material-symbols-outlined"><?= $cfg['icon'] ?></span></div>
                     <div>
-                        <p><?= htmlspecialchars($rolNombre) ?>s</p>
+                        <p><?= htmlspecialchars(plural($rolNombre)) ?></p>
                         <h3><?= count($usuariosPorRol[$rolNombre]) ?></h3>
                         <span>Ver solo esta columna</span>
                     </div>
@@ -191,7 +348,7 @@ function inicialesRoles($nombre) {
                     <div class="role-column-head accent-<?= $cfg['accent'] ?>">
                         <div class="role-column-title">
                             <span class="material-symbols-outlined"><?= $cfg['icon'] ?></span>
-                            <strong><?= htmlspecialchars($rolNombre) ?>s</strong>
+                            <strong><?= htmlspecialchars(plural($rolNombre)) ?></strong>
                         </div>
                         <span class="role-count" data-role-count="<?= htmlspecialchars($rolNombre) ?>"><?= count($usuariosPorRol[$rolNombre]) ?></span>
                     </div>
@@ -270,11 +427,20 @@ function inicialesRoles($nombre) {
                     <small class="field-error" id="errorUsuarioCorreo"></small>
                 </div>
 
+                <div class="form-group" id="grupoUsuarioPassword" style="text-align:left;">
+                    <label for="usuarioPassword">Contraseña</label>
+                    <div class="input-icon">
+                        <span class="material-symbols-outlined">lock</span>
+                        <input type="password" id="usuarioPassword" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+                    </div>
+                    <small class="field-error" id="errorUsuarioPassword"></small>
+                </div>
+
                 <div class="form-group" style="text-align:left;">
-                    <label for="usuarioDetalle">Departamento / Categorías / Empresa</label>
+                    <label for="usuarioDetalle">Departamento / Cargo</label>
                     <div class="input-icon">
                         <span class="material-symbols-outlined">apartment</span>
-                        <input type="text" id="usuarioDetalle" placeholder="Ej. Tecnología, Soporte, Empresa XYZ...">
+                        <input type="text" id="usuarioDetalle" placeholder="Ej. Tecnología, Soporte, Coordinador...">
                     </div>
                 </div>
 
@@ -284,10 +450,10 @@ function inicialesRoles($nombre) {
                         <div class="input-icon">
                             <span class="material-symbols-outlined">badge</span>
                             <select id="usuarioRol">
-                                <option value="Administrador">Administrador</option>
-                                <option value="Supervisor">Supervisor</option>
-                                <option value="Agente">Agente</option>
-                                <option value="Cliente">Cliente</option>
+                                <option value="2">Admin Empresa</option>
+                                <option value="4">Supervisor</option>
+                                <option value="3">Agente</option>
+                                <option value="5">Cliente</option>
                             </select>
                         </div>
                     </div>

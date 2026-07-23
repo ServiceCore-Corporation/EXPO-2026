@@ -5,25 +5,76 @@ require_once '../seguridad.php';
 require_once '../conexion.php';
 $nombreUsuario = htmlspecialchars($_SESSION['nombre'] ?? 'Usuario');
 
-function obtenerRutaDashboard($rol)
-{
-    switch ((int)$rol) {
-        case 1:
-            return 'Admin/dashboard_admin.php';
-        case 2:
-            return 'Admin_Empresa/dashboard_admin_emp.php';
-        case 3:
-            return 'Agente/dashboard_agente.php';
-        case 4:
-            return 'Supervisor/dashboard_aprovador.php';
-        case 5:
-            return 'Cliente/dashboard_cliente.php';
-        default:
-            return '../index.php';
-    }
+// Configuración de encabezado/menú lateral según el rol de quien consulta el historial.
+// Se reutilizan exactamente los mismos enlaces que cada rol ya tiene en su propio dashboard.
+$rolActual = (int)($_SESSION['id_rol'] ?? 0);
+if ($rolActual === 4) {
+    $panelTitulo = 'Panel Supervisor';
+    $panelEtiqueta = 'Supervisor';
+    $logoutHref = '../logout.php';
+    $perfilHref = '../Supervisor/perfil.php';
+    $configHref = '../Supervisor/perfil.php#tarjetaPreferencias';
+    $menuItems = [
+        ['href' => '../Supervisor/dashboard_supervisor.php', 'icon' => 'dashboard',      'label' => 'Inicio'],
+        ['href' => '../Supervisor/asignacion_tickets.php',   'icon' => 'assignment_ind', 'label' => 'Asignación de Tickets'],
+        ['href' => '../Supervisor/usuarios_agentes.php',     'icon' => 'group',          'label' => 'Mis Agentes'],
+        ['href' => '../Supervisor/mis_categorias.php',       'icon' => 'category',       'label' => 'Mis Categorías'],
+        ['href' => '../historial.php',                       'icon' => 'history',        'label' => 'Historial', 'activo' => true],
+    ];
+} elseif ($rolActual === 2) {
+    $panelTitulo = 'Panel de Empresa';
+    $panelEtiqueta = 'Admin Empresa';
+    $logoutHref = '../logout.php';
+    $perfilHref = '../Admin_Empresa/perfil.php';
+    $configHref = '../Admin_Empresa/perfil.php#tarjetaPreferencias';
+    $menuItems = [
+        ['href' => '../Admin_Empresa/dashboard_admin_emp.php', 'icon' => 'dashboard',            'label' => 'Inicio'],
+        ['href' => '../Admin_Empresa/gestion_usuarios.php',    'icon' => 'group',                'label' => 'Gestion de Usuarios'],
+        ['href' => '../Admin_Empresa/crear_categorias.php',    'icon' => 'category',             'label' => 'Gestion de Categorías'],
+        ['href' => '../Admin_Empresa/asignar_categoria.php',   'icon' => 'sell',                 'label' => 'Asignar Categoría'],
+        ['href' => '../Admin_Empresa/gestion_tickets.php',     'icon' => 'confirmation_number',  'label' => 'Gestión de Tickets'],
+        ['href' => '../Admin_Empresa/reportes.php',            'icon' => 'insights',             'label' => 'Reportes'],
+        ['href' => '../historial.php',                         'icon' => 'history',              'label' => 'Historial', 'activo' => true],
+    ];
+} elseif ($rolActual === 3) {
+    $panelTitulo = 'Panel de Agente';
+    $panelEtiqueta = 'Agente';
+    $logoutHref = '../logout.php';
+    $perfilHref = '../Agente/perfil.php';
+    $configHref = '../Agente/perfil.php#tarjetaPreferencias';
+    $menuItems = [
+        ['href' => '../Agente/dashboard_agente.php', 'icon' => 'dashboard',           'label' => 'Inicio'],
+        ['href' => '../Agente/chat_agente.php',      'icon' => 'confirmation_number', 'label' => 'Tickets'],
+        ['href' => '../historial.php',               'icon' => 'history',             'label' => 'Historial', 'activo' => true],
+    ];
+} elseif ($rolActual === 5) {
+    $panelTitulo = 'Mesa de Ayuda';
+    $panelEtiqueta = 'Cliente';
+    $logoutHref = '../logout.php';
+    $perfilHref = '../Cliente/perfil.php';
+    $configHref = '../Cliente/perfil.php#tarjetaPreferencias';
+    $menuItems = [
+        ['href' => '../Cliente/dashboard_cliente.php', 'icon' => 'confirmation_number', 'label' => 'Mis Tickets'],
+        ['href' => '../Cliente/perfil.php',            'icon' => 'person',              'label' => 'Perfil'],
+        ['href' => '../historial.php',                 'icon' => 'history',             'label' => 'Historial', 'activo' => true],
+    ];
+} else {
+    $panelTitulo = 'Panel Administrador';
+    $panelEtiqueta = 'Administrador';
+    $logoutHref = '../logout.php';
+    $perfilHref = 'Admin/perfil.php';
+    $configHref = '#';
+    $menuItems = [
+        ['href' => 'Admin/dashboard_admin.php',   'icon' => 'dashboard',         'label' => 'Inicio'],
+        ['href' => 'Admin/gestion_empresas.php',  'icon' => 'business',          'label' => 'Gestion de Empresas'],
+        ['href' => 'Admin/gestion_carrusel.php',  'icon' => 'view_carousel',     'label' => 'Gestión de Carrusel'],
+        ['href' => 'Admin/gestion_galeria.php',   'icon' => 'photo_library',     'label' => 'Gestión de Galería'],
+        ['href' => 'Admin/gestion_planes.php',    'icon' => 'workspace_premium', 'label' => 'Planes'],
+        ['href' => 'Admin/gestion_pagos.php',     'icon' => 'payments',          'label' => 'Pagos'],
+        ['href' => 'Admin/reportes.php',          'icon' => 'insights',          'label' => 'Reportes'],
+        ['href' => 'historial.php',               'icon' => 'history',           'label' => 'Historial y Auditoría', 'activo' => true],
+    ];
 }
-
-$dashboardRuta = obtenerRutaDashboard((int)($_SESSION['id_rol'] ?? 0));
 
 $fUsuario = isset($_GET['id_usuario']) ? (int)$_GET['id_usuario'] : 0;
 $fTicket  = isset($_GET['id_ticket']) ? (int)$_GET['id_ticket'] : 0;
@@ -86,25 +137,29 @@ while ($row = $resU->fetch_assoc()) $usuarios[] = $row;
     <header class="fixed top-0 left-64 right-0 h-16 bg-white shadow flex items-center justify-between px-8 z-50">
         <div class="flex items-center gap-4">
             <span class="material-symbols-outlined text-[#5750ad]">menu</span>
-            <h1 class="text-xl font-bold text-[#1e1858]">Panel Administrador</h1>
+            <h1 class="text-xl font-bold text-[#1e1858]"><?= htmlspecialchars($panelTitulo) ?></h1>
         </div>
         <div class="relative flex items-center gap-4">
             <span class="material-symbols-outlined cursor-pointer">notifications</span>
             <div class="text-right">
                 <p class="font-bold"><?= $nombreUsuario ?></p>
-                <p class="text-sm text-gray-500">Administrador</p>
+                <p class="text-sm text-gray-500"><?= htmlspecialchars($panelEtiqueta) ?></p>
             </div>
-            <div id="botonUsuario" class="w-10 h-10 rounded-full cursor-pointer border-2 border-[#5750ad] bg-[#5750ad] flex items-center justify-center text-white font-bold">
-                <?= mb_strtoupper(mb_substr($_SESSION['nombre'], 0, 1)) ?>
+            <div id="botonUsuario" class="w-10 h-10 rounded-full cursor-pointer border-2 border-[#5750ad] bg-[#5750ad] flex items-center justify-center text-white font-bold overflow-hidden">
+                <?php if (!empty($_SESSION['foto'])): ?>
+                    <img src="<?= htmlspecialchars($_SESSION['foto']) ?>" alt="Foto de perfil" class="w-full h-full object-cover">
+                <?php else: ?>
+                    <?= mb_strtoupper(mb_substr($_SESSION['nombre'], 0, 1)) ?>
+                <?php endif; ?>
             </div>
             <div id="menuUsuario" class="hidden absolute right-0 top-14 w-52 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50">
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
+                <a href="<?= htmlspecialchars($configHref) ?>" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
                     <span class="material-symbols-outlined text-gray-600">settings</span>Configuración
                 </a>
-                <a href="perfil.php" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
+                <a href="<?= htmlspecialchars($perfilHref) ?>" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
                     <span class="material-symbols-outlined text-gray-600">person</span>Perfil
                 </a>
-                <a href="../../logout.php" class="flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition">
+                <a href="<?= htmlspecialchars($logoutHref) ?>" class="flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition">
                     <span class="material-symbols-outlined">logout</span>Cerrar Sesión
                 </a>
             </div>
@@ -118,35 +173,16 @@ while ($row = $resU->fetch_assoc()) $usuarios[] = $row;
             <h6 class="text-lg font-bold text-center leading-6">ServiceCore<br>Corporation</h6>
         </div>
         <nav class="flex flex-col flex-1 gap-2">
-            <a href="Admin/dashboard_admin.php" class="menu-item">
-                <span class="material-symbols-outlined">dashboard</span>Inicio
-            </a>
-            <a href="Admin/gestion_empresas.php" class="menu-item ">
-                <span class="material-symbols-outlined">business</span> Gestion de Empresas
-            </a>
-            <a href="Admin/gestion_carrusel.php" class="menu-item">
-                <span class="material-symbols-outlined">view_carousel</span>Gestión de Carrusel
-            </a>
-            <a href="Admin/gestion_galeria.php" class="menu-item">
-                <span class="material-symbols-outlined">photo_library</span>Gestión de Galería
-            </a>
-            <a href="Admin/gestion_planes.php" class="menu-item">
-                <span class="material-symbols-outlined">workspace_premium</span>Planes
-            </a>
-            <a href="Admin/gestion_pagos.php" class="menu-item">
-                <span class="material-symbols-outlined">payments</span>Pagos
-            </a>
-            <a href="Admin/reportes.php" class="menu-item">
-                <span class="material-symbols-outlined">insights</span>Reportes
-            </a>
-            <a href="historial.php" class="menu-item activo">
-                <span class="material-symbols-outlined">history</span>Historial y Auditoría
-            </a>
+            <?php foreach ($menuItems as $item): ?>
+                <a href="<?= htmlspecialchars($item['href']) ?>" class="menu-item <?= !empty($item['activo']) ? 'activo' : '' ?>">
+                    <span class="material-symbols-outlined"><?= htmlspecialchars($item['icon']) ?></span><?= htmlspecialchars($item['label']) ?>
+                </a>
+            <?php endforeach; ?>
         </nav>
 
         <br><br>
         <!-- Cerrar sesión -->
-        <a href="../logout.php"class="mt-auto flex items-center justify-center gap-3 w-full py-3 rounded-xl border-2 border-red-500 text-red-400 font-semibold transition-all duration-300 hover:bg-red-500 hover:text-white hover:shadow-lg">
+        <a href="<?= htmlspecialchars($logoutHref) ?>" class="mt-auto flex items-center justify-center gap-3 w-full py-3 rounded-xl border-2 border-red-500 text-red-400 font-semibold transition-all duration-300 hover:bg-red-500 hover:text-white hover:shadow-lg">
             <span class="material-symbols-outlined">logout</span>
             Cerrar Sesión
         </a>
@@ -256,8 +292,22 @@ while ($row = $resU->fetch_assoc()) $usuarios[] = $row;
                                     <span class="badge-sc <?= $clase ?>"><?= htmlspecialchars($r['accion']) ?></span>
                                 </td>
                                 <td class="text-gray-600"><?= htmlspecialchars($r['campo_modificado']) ?></td>
-                                <td class="text-gray-500 max-w-[180px] truncate" title="<?= htmlspecialchars($r['valor_anterior']) ?>"><?= htmlspecialchars($r['valor_anterior']) ?></td>
-                                <td class="text-[#1e1858] font-medium max-w-[180px] truncate" title="<?= htmlspecialchars($r['valor_nuevo']) ?>"><?= htmlspecialchars($r['valor_nuevo']) ?></td>
+                                <td class="text-gray-500 max-w-[180px] truncate" title="<?= htmlspecialchars($r['valor_anterior']) ?>"><?= htmlspecialchars($r['valor_anterior']) ?: '—' ?></td>
+                                <td class="max-w-[180px] truncate" title="<?= htmlspecialchars($r['valor_nuevo']) ?>">
+                                    <?php if (mb_strtolower($r['campo_modificado']) === 'estado' && $r['valor_nuevo'] !== ''):
+                                        $estadoMap = [
+                                            'Pendiente'   => 'badge-otro',
+                                            'En proceso'  => 'badge-editar',
+                                            'Cerrado'     => 'badge-crear',
+                                            'Cancelado'   => 'badge-eliminar',
+                                        ];
+                                        $claseEstado = $estadoMap[$r['valor_nuevo']] ?? 'badge-otro';
+                                    ?>
+                                        <span class="badge-sc <?= $claseEstado ?>"><?= htmlspecialchars($r['valor_nuevo']) ?></span>
+                                    <?php else: ?>
+                                        <span class="text-[#1e1858] font-medium"><?= htmlspecialchars($r['valor_nuevo']) ?: '—' ?></span>
+                                    <?php endif; ?>
+                                </td>
                             </tr>
                         <?php endforeach; endif; ?>
                     </tbody>

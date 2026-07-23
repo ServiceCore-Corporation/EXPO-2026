@@ -549,10 +549,14 @@
             </td>
             <td><span data-row-correo>${data.correo}</span></td>
             <td><span data-row-telefono>${data.telefono}</span></td>
+            <td><span class="badge badge-gray" data-row-usuarios>0</span></td>
             <td><span class="${data.estado === 'Activo' ? 'badge badge-green' : 'badge badge-gray'}" data-row-estado-badge>${data.estado}</span></td>
             <td><span data-row-fecha>${data.fecha}</span></td>
             <td>
                 <div class="row-actions">
+                    <button class="row-icon-btn" data-action="ver-empresa" title="Ver información general">
+                        <span class="material-symbols-outlined">visibility</span>
+                    </button>
                     <button class="row-icon-btn" data-action="editar-empresa" title="Editar empresa">
                         <span class="material-symbols-outlined">edit</span>
                     </button>
@@ -682,6 +686,24 @@
     });
     modalConfirmarEmp?.addEventListener('click', (e) => { if (e.target === modalConfirmarEmp) closeConfirmEmp(); });
 
+    /* ---------- Modal: ver información general de la empresa ---------- */
+    const modalVerEmpresa = $('#modalVerEmpresa');
+    function abrirModalVerEmpresa(row) {
+        $('#verEmpNombre').textContent = row.dataset.nombre;
+        $('#verEmpSub').textContent = 'Información general de la empresa';
+        $('#verEmpCorreo').textContent = row.dataset.correo || '—';
+        $('#verEmpTelefono').textContent = row.dataset.telefono || '—';
+        $('#verEmpEstado').textContent = row.dataset.estado;
+        $('#verEmpFecha').textContent = row.querySelector('[data-row-fecha]')?.textContent || '—';
+        $('#verEmpUsuarios').textContent = row.dataset.totalUsuarios || '0';
+        $('#verEmpPagos').textContent = row.dataset.totalPagos || '0';
+        modalVerEmpresa.classList.add('open');
+    }
+    function cerrarModalVerEmpresa() { modalVerEmpresa.classList.remove('open'); }
+    $('#modalVerEmpresaCerrar')?.addEventListener('click', cerrarModalVerEmpresa);
+    $('#btnCerrarVerEmpresa')?.addEventListener('click', cerrarModalVerEmpresa);
+    modalVerEmpresa?.addEventListener('click', (e) => { if (e.target === modalVerEmpresa) cerrarModalVerEmpresa(); });
+
     document.addEventListener('click', function (e) {
         const btn = e.target.closest('.row-icon-btn');
         if (!btn) return;
@@ -689,6 +711,10 @@
         if (!row) return;
         const accion = btn.dataset.action;
         const nombre = row.dataset.nombre;
+
+        if (accion === 'ver-empresa') {
+            abrirModalVerEmpresa(row);
+        }
 
         if (accion === 'editar-empresa') {
             abrirModalEditarEmpresa(row);
@@ -762,3 +788,4 @@
     aplicarFiltroEmp();
 
 })();
+

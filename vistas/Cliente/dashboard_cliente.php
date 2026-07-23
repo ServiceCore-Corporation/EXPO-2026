@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 define('ROL_REQUERIDO', 5);
 require_once '../../seguridad.php';
 $nombreUsuario = htmlspecialchars($_SESSION['nombre']);
@@ -15,6 +15,7 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../css/dashboard_cliente.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -30,8 +31,12 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
                 <p class="font-bold"><?= $nombreUsuario ?></p>
                 <p class="text-sm text-gray-500">Cliente</p>
             </div>
-            <div id="botonUsuario" class="w-10 h-10 rounded-full cursor-pointer border-2 border-[#5750ad] bg-[#5750ad] flex items-center justify-center text-white font-bold">
-                <?= mb_strtoupper(mb_substr($_SESSION['nombre'], 0, 1)) ?>
+            <div id="botonUsuario" class="w-10 h-10 rounded-full cursor-pointer border-2 border-[#5750ad] bg-[#5750ad] flex items-center justify-center text-white font-bold overflow-hidden">
+                <?php if (!empty($_SESSION['foto'])): ?>
+                    <img src="../<?= htmlspecialchars($_SESSION['foto']) ?>" alt="Foto de perfil" class="w-full h-full object-cover">
+                <?php else: ?>
+                    <?= mb_strtoupper(mb_substr($_SESSION['nombre'], 0, 1)) ?>
+                <?php endif; ?>
             </div>
             <div id="menuUsuario" class="hidden absolute right-0 top-14 w-52 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50">
                 <a href="perfil.php" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition">
@@ -119,7 +124,7 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
         </section>
 
         <!-- Estadísticas -->
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
             <div class="tarjeta animar">
                 <p class="text-sm text-gray-500 uppercase mb-2">Total</p>
                 <h2 class="text-4xl font-bold text-[#5750ad]" id="stat-total">--</h2>
@@ -131,6 +136,10 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
             <div class="tarjeta animar">
                 <p class="text-sm text-gray-500 uppercase mb-2">Resueltos</p>
                 <h2 class="text-4xl font-bold text-green-600" id="stat-resueltos">--</h2>
+            </div>
+            <div class="tarjeta animar">
+                <p class="text-sm text-gray-500 uppercase mb-2">Cancelados</p>
+                <h2 class="text-4xl font-bold text-red-500" id="stat-cancelados">--</h2>
             </div>
         </section>
 
@@ -195,8 +204,13 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
             return m[e] || 'bg-gray-100 text-gray-700';
         }
         function colorPrioridad(p) {
-            const m = {'Alta':'text-red-600','Media':'text-orange-500','Baja':'text-blue-500'};
-            return m[p] || 'text-gray-600';
+            const m = {
+                'Baja':    'bg-blue-100 text-blue-700',
+                'Media':   'bg-yellow-100 text-yellow-700',
+                'Alta':    'bg-orange-100 text-orange-700',
+                'Crítica': 'bg-red-100 text-red-700',
+            };
+            return m[p] || 'bg-gray-100 text-gray-700';
         }
 
         function abrirModal() { document.getElementById('modalNuevoTicket').classList.remove('hidden'); }
@@ -274,7 +288,13 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
                     document.getElementById('ticketTitulo').value = '';
                     document.getElementById('ticketDescripcion').value = '';
                     cargarTickets();
-                    alert('Ticket creado exitosamente');
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Tu ticket ha sido creado correctamente",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
                 } else {
                     alert(data?.error || 'Error creando ticket');
                 }
@@ -291,11 +311,13 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
                     throw new Error(data?.error || `Error cargando tickets (${res.status})`);
                 }
                 const lista = Array.isArray(data) ? data : [];
-                const abiertos  = lista.filter(t => t.estado !== 'Cerrado' && t.estado !== 'Cancelado').length;
-                const resueltos = lista.filter(t => t.estado === 'Cerrado').length;
-                document.getElementById('stat-total').textContent    = lista.length;
-                document.getElementById('stat-abiertos').textContent = abiertos;
-                document.getElementById('stat-resueltos').textContent = resueltos;
+                const abiertos   = lista.filter(t => t.estado === 'Pendiente' || t.estado === 'En proceso').length;
+                const resueltos  = lista.filter(t => t.estado === 'Cerrado').length;
+                const cancelados = lista.filter(t => t.estado === 'Cancelado').length;
+                document.getElementById('stat-total').textContent      = lista.length;
+                document.getElementById('stat-abiertos').textContent   = abiertos;
+                document.getElementById('stat-resueltos').textContent  = resueltos;
+                document.getElementById('stat-cancelados').textContent = cancelados;
                 const tbody = document.getElementById('tabla-tickets');
                 tbody.innerHTML = lista.length === 0
                     ? '<tr><td colspan="7" class="p-5 text-center text-gray-400">No tienes tickets aún</td></tr>'
@@ -304,7 +326,7 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
                             <td class="p-5 font-bold">#TK-${t.id_ticket}</td>
                             <td class="p-5 font-medium">${t.titulo}</td>
                             <td class="p-5"><span class="px-3 py-1 rounded-full text-xs font-bold ${colorEstado(t.estado)}">${t.estado}</span></td>
-                            <td class="p-5 font-bold ${colorPrioridad(t.prioridad)}">${t.prioridad || '—'}</td>
+                            <td class="p-5"><span class="px-3 py-1 rounded-full text-xs font-bold ${colorPrioridad(t.prioridad)}">${t.prioridad || '—'}</span></td>
                             <td class="p-5 text-gray-500">${t.agente || 'Sin asignar'}</td>
                             <td class="p-5 text-gray-500 text-sm">${new Date(t.fecha_creacion).toLocaleDateString('es-GT')}</td>
                             <td class="p-5">
@@ -325,6 +347,5 @@ $idUsuario     = (int)$_SESSION['usuario_id'];
 
     <script>window.ID_USUARIO_ACTUAL = <?= $idUsuario ?>;</script>
     <script src="../../js/chat_widget.js"></script>
-        <script src="../../js/tickets.js"></script>
 </body>
 </html>

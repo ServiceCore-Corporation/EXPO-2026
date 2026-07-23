@@ -146,6 +146,10 @@
             if (resumenAvatar) {
                 resumenAvatar.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
             }
+            const botonUsuario = document.getElementById('botonUsuario');
+            if (botonUsuario) {
+                botonUsuario.innerHTML = `<img src="${e.target.result}" alt="Foto de perfil" class="w-full h-full object-cover">`;
+            }
         };
         reader.readAsDataURL(file);
 
